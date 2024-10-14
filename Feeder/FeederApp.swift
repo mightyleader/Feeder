@@ -19,6 +19,7 @@ struct FeederApp: App {
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
         } catch {
+            //TODO: add some error correction
             fatalError("Could not create ModelContainer: \(error)")
         }
     }()
