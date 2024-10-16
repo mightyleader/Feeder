@@ -8,8 +8,6 @@
 import SwiftUI
 import SwiftData
 
-
-
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var items: [Item]
@@ -38,7 +36,7 @@ struct FeedsView: View {
     
     private func total() -> Int {
         items.map { item in
-            item.milk_ml
+            item.qty_ml
         }.reduce(0, +)
     }
     

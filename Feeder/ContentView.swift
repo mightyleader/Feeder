@@ -10,7 +10,8 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    @State private var showTodayOnly: Bool = false
+    @State private var showTodayOnly: Bool = true
+    @State private var showAddItemSheet: Bool = false
     var calendar: Calendar = .autoupdatingCurrent
     var body: some View {
         NavigationSplitView {
@@ -25,7 +26,12 @@ struct ContentView: View {
                 }
 #endif
                 ToolbarItem {
-                    Button(action: addItem) {
+//                    Button(action: addItem) {
+//                        Label("Add Item", systemImage: "plus")
+//                    }
+                    Button {
+                        self.showAddItemSheet.toggle()
+                    } label: {
                         Label("Add Item", systemImage: "plus")
                     }
                 }
@@ -35,18 +41,14 @@ struct ContentView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showAddItemSheet) {
+                AddFeedSheetView()
+                    .presentationDetents([.medium])
+            }
         } detail: {
             Text("Select an item")
         }
     }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date(), source: .formula_enriched)
-            modelContext.insert(newItem)
-        }
-    }
-
 }
 
 #Preview {
