@@ -8,7 +8,7 @@
 import Foundation
 import SwiftData
 
-enum Source: String, Codable, CaseIterable, Identifiable {
+enum Source: String, Codable, CaseIterable, Identifiable, Equatable {
     case formula_standard = "Formula"
     case formula_enriched = "Formula Enriched"
     case breast = "Breast Milk"
@@ -25,6 +25,7 @@ final class Item {
     var timestamp: Date
     var qty_ml : Quantities
     var source: Source
+    var id = UUID()
     
     init(timestamp: Date, qty_ml: Quantities, source: Source) {
         self.timestamp = timestamp
