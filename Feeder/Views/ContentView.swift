@@ -12,6 +12,7 @@ struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var showTodayOnly: Bool = true
     @State private var showAddItemSheet: Bool = false
+    @Query private var items: [Item]
     var calendar: Calendar = .autoupdatingCurrent
     var body: some View {
         NavigationSplitView {
@@ -42,6 +43,8 @@ struct ContentView: View {
                 AddFeedSheetView()
                     .presentationDetents([.medium])
             }
+            .navigationTitle("Feeds")
+            .navigationBarTitleDisplayMode(.large)
         } detail: {
             Text("Select an item")
         }
