@@ -27,8 +27,8 @@ struct FeedsView: View {
                     } label: {
                         HStack {
                             Text("\(item.timestamp, format: Date.FormatStyle(date: .none, time: .shortened))")
-                            SourceLabel(source: item.source)
                             FeedLabel(qtys: item.qty_ml)
+                            SourceLabel(source: item.source)
                         }
                     }
                 }
