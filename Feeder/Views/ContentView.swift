@@ -45,8 +45,10 @@ struct ContentView: View {
             }
             .navigationTitle("Feeds")
             .navigationBarTitleDisplayMode(.large)
+            .foregroundStyle(.green)
         } detail: {
-            Text("Select an item")
+//            Text("Select an item")
+            FeedDetailView(items: self.items)
         }
     }
 }
