@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct FeedLabel: View {
+    
+    var qtys: Quantities
+    
+    init(qtys: Quantities) {
+        self.qtys = qtys
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(" \(String(self.qtys.rawValue)) ml ")
+            .background(.blue)
+            .foregroundStyle(.white)
+            .cornerRadius(5.0)
+            .fontWeight(.heavy)
     }
 }
 
 #Preview {
-    FeedLabel()
+    FeedLabel(qtys: .fifty)
 }

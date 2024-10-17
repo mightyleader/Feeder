@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct SourceLabel: View {
+    
+    var source: Source
+    
+    init(source: Source) {
+        self.source = source
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(" \(self.source.rawValue) ")
+            .background(.pink)
+            .foregroundStyle(.white)
+            .cornerRadius(5.0)
+            .fontWeight(.heavy)
     }
 }
 
 #Preview {
-    SourceLabel()
+    SourceLabel(source: .breast)
 }
