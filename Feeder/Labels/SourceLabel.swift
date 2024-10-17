@@ -10,14 +10,23 @@ import SwiftUI
 struct SourceLabel: View {
     
     var source: Source
+    var color: Color = .pink
     
     init(source: Source) {
         self.source = source
+        switch source {
+        case .breast:
+            self.color = .pink
+        case .formula_enriched:
+            self.color = .yellow
+        case .formula_standard:
+            self.color = .green
+        }
     }
     
     var body: some View {
         Text(" \(self.source.rawValue) ")
-            .background(.pink)
+            .background(self.color)
             .foregroundStyle(.white)
             .cornerRadius(5.0)
             .fontWeight(.heavy)
