@@ -12,14 +12,15 @@ struct TotalView: View {
     var body: some View {
         HStack {
             Text("🍼")
-                .font(.largeTitle)
+                .font(.title)
                 .padding()
             Text("Total:")
-                .font(.largeTitle)
+                .font(.title)
                 .fontWeight(.heavy)
+                .foregroundStyle(.gray)
                 .padding()
             Text("\(qty_ml) ml")
-                .font(.largeTitle)
+                .font(.title)
                 .fontWeight(.heavy)
                 .foregroundColor(qty_ml >= 500 ? .green : .red)
                 .padding()
