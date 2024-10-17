@@ -6,13 +6,25 @@
 //
 
 import SwiftUI
+import Charts
 
 struct FeedDetailView: View {
+    var items: [Item]
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Chart(items, id: \.timestamp) { dataItem in
+                BarMark(x: .value("Date", dataItem.timestamp),
+                        y: .value("Feed (ml)", Int(dataItem.qty_ml.rawValue)!))
+                .foregroundStyle(by: .value("Source", dataItem.source.rawValue))
+            }
+            .padding()
+        }
+        .padding()
     }
 }
 
 #Preview {
-    FeedDetailView()
+    FeedDetailView(items: [Item(timestamp: Date(),
+                                qty_ml: .fifty,
+                                source: .formula_standard)])
 }
