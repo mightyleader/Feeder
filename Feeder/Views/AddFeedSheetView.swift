@@ -22,13 +22,13 @@ struct AddFeedSheetView: View {
             }
 #if os(macOS)
             .pickerStyle(MenuPickerStyle())
-            .padding()
+//            .padding()
 #endif
 #if os(iOS)
             .pickerStyle(WheelPickerStyle())
             .font(.title)
             .fontWeight(.heavy)
-            .padding()
+//            .padding()
 #endif
             Picker("Source", selection: $source) {
                 ForEach(Source.allCases) { source in
@@ -45,6 +45,7 @@ struct AddFeedSheetView: View {
             .buttonStyle(.borderedProminent)
             .foregroundStyle(.white)
             .backgroundStyle(.green)
+            Spacer()
         }
     }
     
