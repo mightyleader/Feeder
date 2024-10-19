@@ -10,12 +10,12 @@ import SwiftData
 
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
+    @Query(sort: \Item.timestamp, order: .forward) private var items: [Item]
     
     init(limitingDate: Date) {
         _items = Query(filter: #Predicate<Item> { item in
             item.timestamp >= limitingDate
-        }, sort: \Item.timestamp)      
+        }, sort: \Item.timestamp)
     }
     
     var body: some View {
@@ -23,10 +23,16 @@ struct FeedsView: View {
             List {
                 ForEach(items) { item in
                     NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
+                        VStack {
+                            Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
+                                .font(.headline)
+                            FeedLabel(qtys: item.qty_ml)
+                            SourceLabel(source: item.source)
+                        }
+                        .padding()
                     } label: {
                         HStack {
-                            Text("\(item.timestamp, format: Date.FormatStyle(date: .none, time: .shortened))")
+                            Text("\(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
                             FeedLabel(qtys: item.qty_ml)
                             SourceLabel(source: item.source)
                         }
@@ -34,11 +40,11 @@ struct FeedsView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
-            TotalView(qty_ml: total())
+            TotalView(qty_ml: total(items: self.items))
         }
     }
     
-    private func total() -> Int {
+    private func total(items: [Item]) -> Int {
         items.map { item in
             Int(item.qty_ml.rawValue)!
         }.reduce(0, +)
@@ -54,6 +60,5 @@ struct FeedsView: View {
 }
 
 #Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+    FeedsView(limitingDate: Date.distantPast)
 }
