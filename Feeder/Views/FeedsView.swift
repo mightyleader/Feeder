@@ -10,18 +10,18 @@ import SwiftData
 
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Feed.timestamp, order: .forward) private var items: [Feed]
+    @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     init(limitingDate: Date) {
-        _items = Query(filter: #Predicate<Feed> { item in
-            item.timestamp >= limitingDate
+        _feeds = Query(filter: #Predicate<Feed> { feed in
+            feed.timestamp >= limitingDate
         }, sort: \Feed.timestamp)
     }
     
     var body: some View {
         VStack {
             List {
-                ForEach(items) { item in
+                ForEach(feeds) { item in
                     NavigationLink {
                         VStack {
                             Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
@@ -40,7 +40,7 @@ struct FeedsView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
-            TotalView(qty_ml: total(items: self.items))
+            TotalView(qty_ml: total(items: self.feeds))
         }
     }
     
@@ -53,7 +53,7 @@ struct FeedsView: View {
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(feeds[index])
             }
         }
     }
