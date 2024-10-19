@@ -10,12 +10,12 @@ import SwiftData
 
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Item.timestamp, order: .forward) private var items: [Item]
+    @Query(sort: \Feed.timestamp, order: .forward) private var items: [Feed]
     
     init(limitingDate: Date) {
-        _items = Query(filter: #Predicate<Item> { item in
+        _items = Query(filter: #Predicate<Feed> { item in
             item.timestamp >= limitingDate
-        }, sort: \Item.timestamp)
+        }, sort: \Feed.timestamp)
     }
     
     var body: some View {
@@ -44,7 +44,7 @@ struct FeedsView: View {
         }
     }
     
-    private func total(items: [Item]) -> Int {
+    private func total(items: [Feed]) -> Int {
         items.map { item in
             Int(item.qty_ml.rawValue)!
         }.reduce(0, +)

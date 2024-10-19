@@ -9,7 +9,7 @@ import SwiftUI
 import Charts
 
 struct FeedDetailView: View {
-    var items: [Item]
+    var items: [Feed]
     
     var body: some View {
         VStack {
@@ -31,7 +31,7 @@ struct FeedDetailView: View {
 }
 
 #Preview {
-    FeedDetailView(items: [Item(timestamp: Date(),
+    FeedDetailView(items: [Feed(timestamp: Date(),
                                 qty_ml: .fifty,
                                 source: .formula_standard)])
 }

@@ -14,7 +14,7 @@ struct ContentView: View {
     @State private var showTodayOnly: Bool = true
     @State private var showAddItemSheet: Bool = false
     
-    @Query(sort: \Item.timestamp, order: .forward) private var items: [Item]
+    @Query(sort: \Feed.timestamp, order: .forward) private var items: [Feed]
     
     var calendar: Calendar = .autoupdatingCurrent
     var limitingDate: Date {
@@ -106,7 +106,7 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Feed.self, inMemory: true)
 }
 
 extension ContentView {
@@ -137,64 +137,64 @@ extension ContentView {
     // TEST DATA
     private func importItems() {
         let historyData = [
-            Item(timestamp: Date(timeIntervalSince1970: 1725166800),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725166800),
                  qty_ml: .five,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725253200),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725253200),
                  qty_ml: .ten,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725339600),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725339600),
                  qty_ml: .fifteen,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725426000),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725426000),
                  qty_ml: .twenty,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725512400),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725512400),
                  qty_ml: .twentyfive,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725598800),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725598800),
                  qty_ml: .thirty,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725685200),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725685200),
                  qty_ml: .thirtyfive,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725771600),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725771600),
                  qty_ml: .forty,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725858000),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725858000),
                  qty_ml: .fortyfive,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725944400),
+            Feed(timestamp: Date(timeIntervalSince1970: 1725944400),
                  qty_ml: .fifty,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726030800),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726030800),
                  qty_ml: .fiftyfive,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726117200),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726117200),
                  qty_ml: .sixty,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726203600),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726203600),
                  qty_ml: .sixtyfive,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726290000),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726290000),
                  qty_ml: .seventy,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726376400),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726376400),
                  qty_ml: .seventyfive,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726462800),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726462800),
                  qty_ml: .eighty,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726549200),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726549200),
                  qty_ml: .eightyfive,
                  source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726635600),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726635600),
                  qty_ml: .ninety,
                  source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726722000),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726722000),
                  qty_ml: .ninetyfive,
                  source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726808400),
+            Feed(timestamp: Date(timeIntervalSince1970: 1726808400),
                  qty_ml: .onehundred,
                  source: .formula_standard)
             ]

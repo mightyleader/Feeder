@@ -51,7 +51,7 @@ struct AddFeedSheetView: View {
     
     private func addItem() {
         withAnimation {
-            let newItem = Item(timestamp: Date(), qty_ml:qty, source: source)
+            let newItem = Feed(timestamp: Date(), qty_ml:qty, source: source)
             modelContext.insert(newItem)
             self.dismiss()
         }

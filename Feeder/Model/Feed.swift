@@ -21,7 +21,7 @@ enum Quantities: String, Codable, CaseIterable, Identifiable {
 }
 
 @Model
-final class Item {
+final class Feed {
     var timestamp: Date
     var qty_ml : Quantities
     var source: Source
