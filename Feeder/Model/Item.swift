@@ -22,10 +22,10 @@ enum Quantities: String, Codable, CaseIterable, Identifiable {
 
 @Model
 final class Item {
-    var timestamp: Date
-    var qty_ml : Quantities
-    var source: Source
-    var qty_as_int: Int { Int(qty_ml.rawValue) ?? 0 }   
+    var timestamp: Date = Date.now
+    var qty_ml : Quantities = Quantities.zero
+    var source: Source = Source.breast
+    var qty_as_int: Int { Int(qty_ml.rawValue) ?? 0 }
     
     init(timestamp: Date, qty_ml: Quantities, source: Source) {
         self.timestamp = timestamp
