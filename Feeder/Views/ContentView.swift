@@ -41,8 +41,8 @@ struct ContentView: View {
                     } label: {
                         Label("Add Item", systemImage: "plus")
                     }
-                    .foregroundStyle(.green)
                 }
+                .foregroundStyle(.green)
                 ToolbarItem {
                     Button {
                         showTodayOnly.toggle()
@@ -84,29 +84,6 @@ struct ContentView: View {
 #Preview {
     ContentView()
         .modelContainer(for: Feed.self, inMemory: true)
-}
-
-extension ContentView {
-    
-//    private mutating func filterByToday() {
-//        _items = Query(filter: #Predicate<Item> { item in
-//            item.timestamp >= limitingDate
-//        })
-//    }
-    
-//    private func total(items: [Item]) -> Int {
-//        items.map { item in
-//            Int(item.qty_ml.rawValue)!
-//        }.reduce(0, +)
-//    }
-    
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            for index in offsets {
-//                modelContext.delete(items[index])
-//            }
-//        }
-//    }
 }
 
 extension ContentView {
