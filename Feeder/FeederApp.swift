@@ -12,7 +12,7 @@ import SwiftData
 struct FeederApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Feed.self,
+            Feed.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

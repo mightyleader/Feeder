@@ -25,7 +25,8 @@ final class Feed {
     var timestamp: Date
     var qty_ml : Quantities
     var source: Source
-    var qty_as_int: Int { Int(qty_ml.rawValue) ?? 0 }   
+    var qty_as_int: Int { Int(qty_ml.rawValue) ?? 0 }
+    var id = UUID()
     
     init(timestamp: Date, qty_ml: Quantities, source: Source) {
         self.timestamp = timestamp
