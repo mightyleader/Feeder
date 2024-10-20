@@ -10,8 +10,8 @@ import SwiftData
 
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
-    
+    @Query private var feeds: [Feed]
+    //(sort: \Feed.timestamp, order: .forward)
     init(limitingDate: Date) {
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
