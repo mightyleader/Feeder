@@ -22,9 +22,9 @@ enum Quantities: String, Codable, CaseIterable, Identifiable {
 
 @Model
 final class Feed {
-    var timestamp: Date
-    var qty_ml : Quantities
-    var source: Source
+    var timestamp: Date = Date.now
+    var qty_ml : Quantities = Quantities.zero
+    var source: Source = Source.breast
     var qty_as_int: Int { Int(qty_ml.rawValue) ?? 0 }
     var id = UUID()
     
