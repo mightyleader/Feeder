@@ -32,8 +32,8 @@ final class Feed {
         self.source = source
         self.qty_ml = qty_ml
     }
-    
-    func isToday() -> Bool {
-        self.timestamp.distance(to: Date.now) <= 86400
-    }
+//    
+//    func isToday() -> Bool {
+//        self.timestamp.distance(to: Date.now) <= 86400
+//    }
 }
