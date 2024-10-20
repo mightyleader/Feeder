@@ -9,12 +9,24 @@ import Foundation
 import SwiftData
 
 @Model
-final class Day {
-    var date: Date
-    var day: Date
+final class Day: Identifiable, Equatable, Comparable {
+    static func < (lhs: Day, rhs: Day) -> Bool {
+        if lhs.date == rhs.date {
+            return lhs.id < rhs.id
+        }
+        return lhs.date < rhs.date
+    }
     
-    init(date: Date, day: Date) {
+    var id = UUID()
+    var date: Date
+    var feeds: [Feed]
+    
+    init(date: Date, feeds: [Feed]) {
         self.date = date
-        self.day = day
+        self.feeds = feeds
+    }
+    
+    static func == (lhs: Day, rhs: Day) -> Bool {
+        lhs.date == rhs.date
     }
 }

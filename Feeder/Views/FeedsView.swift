@@ -15,30 +15,27 @@ struct FeedsView: View {
     init(limitingDate: Date) {
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
+            //            Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: Date.now)
         }, sort: \Feed.timestamp)
     }
     
     var body: some View {
         VStack {
             List {
-                ForEach(feeds) { item in
-                    NavigationLink {
-                        VStack {
-                            Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
-                                .font(.headline)
-                            FeedLabel(qtys: item.qty_ml)
-                            SourceLabel(source: item.source)
+                ForEach(structuredData(fromFeeds: self.feeds)) { day in
+                    Section(header:HStack {Text(day.date,format: Date.FormatStyle(date: .abbreviated,time: .none))
+                        Text(String(day.feeds.count))})
+                    {
+                        ForEach(day.feeds) { feed in
+                            HStack {
+                                Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .complete))").foregroundStyle(.gray)
+                                FeedLabel(qtys: feed.qty_ml)
+                                SourceLabel(source: feed.source)
+                            }
                         }
-                        .padding()
-                    } label: {
-                        HStack {
-                            Text("\(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                            FeedLabel(qtys: item.qty_ml)
-                            SourceLabel(source: item.source)
-                        }
+                        .foregroundStyle(.gray)
                     }
                 }
-                .onDelete(perform: deleteItems)
             }
             TotalView(qty_ml: total(items: self.feeds))
         }
@@ -56,6 +53,38 @@ struct FeedsView: View {
                 modelContext.delete(feeds[index])
             }
         }
+    }
+}
+
+extension FeedsView {
+    
+    private func setOfDays(fromFeeds feeds: [Feed]) -> [Date] {
+        let dates = feeds.map { feed in
+            Calendar.autoupdatingCurrent.startOfDay(for: feed.timestamp)
+        }
+        return Array(Set(dates))
+    }
+    
+    private func structuredData(fromFeeds feeds: [Feed]) -> [Day] {
+        let dates = setOfDays(fromFeeds: feeds)
+        var returnStructuredData = Set<Day>()
+        for date in dates {
+            returnStructuredData.insert(Day(date: date,
+                                            feeds: self.match(Date: date,
+                                                              toFeeds: feeds)))
+            
+        }
+        return Array(returnStructuredData).sorted { $0.date > $1.date }
+    }
+    
+    private func match(Date date: Date, toFeeds feeds: [Feed]) -> [Feed] {
+        var matchingFeeds = [Feed]()
+        for feed in feeds {
+            if Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: date) {
+                matchingFeeds.append(feed)
+            }
+        }
+        return matchingFeeds
     }
 }
 

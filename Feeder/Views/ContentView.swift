@@ -24,29 +24,6 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             FeedsView(limitingDate: self.limitingDate)
-//            VStack {
-//                List {
-//                    ForEach(items) { item in
-//                        NavigationLink {
-//                            VStack {
-//                                Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
-//                                    .font(.headline)
-//                                FeedLabel(qtys: item.qty_ml)
-//                                SourceLabel(source: item.source)
-//                            }
-//                            .padding()
-//                        } label: {
-//                            HStack {
-//                                Text("\(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-//                                FeedLabel(qtys: item.qty_ml)
-//                                SourceLabel(source: item.source)
-//                            }
-//                        }
-//                    }
-//                    .onDelete(perform: deleteItems)
-//                }
-//                TotalView(qty_ml: total(items: self.items))
-//            }
 #if os(macOS)
             .navigationSplitViewColumnWidth(min: 250, ideal: 300)
             .foregroundStyle(.green)
