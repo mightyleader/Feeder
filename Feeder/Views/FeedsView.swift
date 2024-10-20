@@ -11,11 +11,10 @@ import SwiftData
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var feeds: [Feed]
-    //(sort: \Feed.timestamp, order: .forward)
+
     init(limitingDate: Date) {
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
-            //            Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: Date.now)
         }, sort: \Feed.timestamp)
     }
     
