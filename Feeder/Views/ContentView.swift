@@ -18,7 +18,7 @@ struct ContentView: View {
     
     var calendar: Calendar = .autoupdatingCurrent
     var limitingDate: Date {
-        return self.showTodayOnly ? Date(timeIntervalSince1970: 1726808400) : .distantPast
+        return self.showTodayOnly ? Calendar.autoupdatingCurrent.startOfDay(for:Date.now) : .distantPast
     }
     
     var body: some View {
