@@ -13,6 +13,7 @@ struct FeedsView: View {
     @Query private var feeds: [Feed]
 
     init(limitingDate: Date) {
+        print("0. FeedsView init called")
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
         }, sort: \Feed.timestamp)
@@ -27,7 +28,7 @@ struct FeedsView: View {
                     {
                         ForEach(day.feeds) { feed in
                             HStack {
-                                Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .complete))").foregroundStyle(.gray)
+                                Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .standard))").foregroundStyle(.gray)
                                 FeedLabel(qtys: feed.qty_ml)
                                 SourceLabel(source: feed.source)
                             }

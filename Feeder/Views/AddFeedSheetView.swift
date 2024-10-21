@@ -38,6 +38,7 @@ struct AddFeedSheetView: View {
             .pickerStyle(InlinePickerStyle())
             
             Button("Add Feed") {
+                print("1. Add Button tapped")
                 self.addItem()
             }
             .font(.largeTitle)
@@ -50,6 +51,7 @@ struct AddFeedSheetView: View {
     }
     
     private func addItem() {
+        print("2. Add Item function called")
         withAnimation {
             let newItem = Feed(timestamp: Date(), qty_ml:qty, source: source)
             modelContext.insert(newItem)

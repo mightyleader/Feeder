@@ -29,6 +29,7 @@ struct SourceLabel: View {
             .background(self.color)
             .foregroundStyle(.white)
             .cornerRadius(5.0)
+            .font(.callout)
             .fontWeight(.heavy)
     }
 }

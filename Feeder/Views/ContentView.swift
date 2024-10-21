@@ -41,8 +41,8 @@ struct ContentView: View {
                     } label: {
                         Label("Add Item", systemImage: "plus")
                     }
+                    .foregroundStyle(.green)
                 }
-                .foregroundStyle(.green)
                 ToolbarItem {
                     Button {
                         showTodayOnly.toggle()
