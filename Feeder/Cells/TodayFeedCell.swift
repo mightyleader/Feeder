@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct TodayFeedCell: View {
+    var feed: Feed
+    
+    init(feed: Feed) {
+        self.feed = feed
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Text("\(feed.timestamp, format: Date.FormatStyle(date: .none,  time: .standard))").foregroundStyle(.gray)
+            Spacer()
+            SourceLabel(source: feed.source)
+            FeedLabel(qtys: feed.qty_ml)
+        }
     }
 }
 
 #Preview {
-    TodayFeedCell()
+    TodayFeedCell(feed: Feed(timestamp: Date.now, qty_ml: .eighty, source: .formula_enriched))
 }

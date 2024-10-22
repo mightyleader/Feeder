@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct HistoryFeedCell: View {
+    var feed: Feed
+    
+    init(feed: Feed) {
+        self.feed = feed
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("\(feed.timestamp, format: Date.FormatStyle(date: .complete, time:.shortened))").foregroundStyle(.gray)
+            HStack {
+                SourceLabel(source: feed.source)
+                Spacer()
+                FeedLabel(qtys: feed.qty_ml)
+            }
+        }
     }
 }
 
 #Preview {
-    HistoryFeedCell()
+    HistoryFeedCell(feed: Feed(timestamp: Date.now, qty_ml: .eighty, source: .formula_enriched))
 }
