@@ -11,8 +11,17 @@ import SwiftData
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var feeds: [Feed]
+    
+    private var todayFormat: Date.FormatStyle = Date.FormatStyle(date: .none,
+                                                                 time: .standard)
+    private var historyFormat: Date.FormatStyle = Date.FormatStyle(date: .complete,
+                                                                   time: .shortened)
+    
+    private var showTodayOnly: Bool
+                            
 
-    init(limitingDate: Date) {
+    init(limitingDate: Date, showTodayOnly: Bool) {
+        self.showTodayOnly = showTodayOnly
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
         }, sort: \Feed.timestamp)
@@ -26,7 +35,7 @@ struct FeedsView: View {
 //                        FeedDetailView(items: self.feeds)
 //                    } label: {
                         HStack {
-                            Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .standard))").foregroundStyle(.gray)
+                            Text("\(feed.timestamp, format: showTodayOnly ? todayFormat : historyFormat)").foregroundStyle(.gray)
                             Spacer()
                             SourceLabel(source: feed.source)
                             FeedLabel(qtys: feed.qty_ml)
@@ -87,5 +96,5 @@ extension FeedsView {
 }
 
 #Preview {
-    FeedsView(limitingDate: Date.distantPast)
+    FeedsView(limitingDate: Date.distantPast, showTodayOnly: true)
 }

@@ -24,7 +24,7 @@ struct ContentView: View {
     var body: some View {
         NavigationSplitView {
             VStack {
-                FeedsView(limitingDate: self.limitingDate)
+                FeedsView(limitingDate: self.limitingDate, showTodayOnly: self.showTodayOnly)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
                     .foregroundStyle(.green)
