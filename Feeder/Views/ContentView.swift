@@ -61,7 +61,7 @@ struct ContentView: View {
                     }
                     .sheet(isPresented: $showAddItemSheet) {
                         AddFeedSheetView()
-                            .presentationDetents([.medium])
+                            .presentationDetents([.large])
                     }
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
@@ -69,7 +69,7 @@ struct ContentView: View {
                     .navigationTitle("Feeds")
             }
         } detail: {
-            FeedDetailView(items: self.items)
+            FeedDetailView()
         }
         .foregroundStyle(.green)
     }

@@ -1,18 +1,15 @@
 //
-//  AddFeedSheetView.swift
+//  EditFeedSheetView.swift
 //  Feeder
 //
-//  Created by Rob Stearn on 16/10/2024.
+//  Created by Rob Stearn on 22/10/2024.
 //
 
 import SwiftUI
-import SwiftData
 
-struct AddFeedSheetView: View {
+struct EditFeedSheetView: View {
     @Environment(\.modelContext) private var modelContext
-    @State var qty: Quantities = .zero
-    @State var source: Source = .formula_standard
-    @State var date: Date = Date()
+    @State var feed: Feed
     
     @Environment(\.dismiss) var dismiss
     
@@ -20,7 +17,7 @@ struct AddFeedSheetView: View {
         VStack {
             DatePicker(
                     "Feed Date",
-                    selection: $date,
+                    selection: $feed.timestamp,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             .datePickerStyle(.graphical)
@@ -28,7 +25,7 @@ struct AddFeedSheetView: View {
             
             HStack {
                 Spacer()
-                Picker("Feed", selection: $qty) {
+                Picker("Feed", selection: $feed.qty_ml) {
                     ForEach(Quantities.allCases) { qty in
                         Text("\(qty.rawValue) ml")
                     }
@@ -47,7 +44,7 @@ struct AddFeedSheetView: View {
             
             HStack {
                 Spacer()
-                Picker("Source", selection: $source) {
+                Picker("Source", selection: $feed.source) {
                     ForEach(Source.allCases) { source in
                         Text(source.rawValue)
                     }
@@ -59,8 +56,8 @@ struct AddFeedSheetView: View {
                 Spacer()
             }
             
-            Button("Add Feed") {
-                self.addItem()
+            Button("Edit Feed") {
+                self.save()
             }
             .font(.headline)
             .fontWeight(.heavy)
@@ -71,15 +68,14 @@ struct AddFeedSheetView: View {
         }
     }
     
-    private func addItem() {
-        withAnimation {
-            let newItem = Feed(timestamp: date, qty_ml:qty, source: source)
-            modelContext.insert(newItem)
-            self.dismiss()
-        }
+    private func save() {
+        try? self.modelContext.save()
+        self.dismiss()
     }
 }
 
 #Preview {
-    AddFeedSheetView()
+    EditFeedSheetView(feed: Feed(timestamp: Date.now,
+                                 qty_ml: .fifty,
+                                 source: .breast))
 }

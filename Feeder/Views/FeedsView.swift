@@ -31,16 +31,16 @@ struct FeedsView: View {
         VStack {
             List {
                 ForEach(self.feeds) { feed in
-//                    NavigationLink {
-//                        FeedDetailView(items: self.feeds)
-//                    } label: {
+                    NavigationLink {
+                        EditFeedSheetView(feed: feed)
+                    } label: {
                         HStack {
                             Text("\(feed.timestamp, format: showTodayOnly ? todayFormat : historyFormat)").foregroundStyle(.gray)
                             Spacer()
                             SourceLabel(source: feed.source)
                             FeedLabel(qtys: feed.qty_ml)
                         }
-//                    }
+                    }
                 }
                 .onDelete(perform: deleteItems)
             }
