@@ -23,57 +23,59 @@ struct ContentView: View {
     
     var body: some View {
         NavigationSplitView {
-            FeedsView(limitingDate: self.limitingDate)
+            VStack {
+                FeedsView(limitingDate: self.limitingDate)
 #if os(macOS)
-            .navigationSplitViewColumnWidth(min: 250, ideal: 300)
-            .foregroundStyle(.green)
-#endif
-            .toolbar {
-#if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                        .foregroundStyle(.green)
-                }
-#endif
-                ToolbarItem {
-                    Button {
-                        self.showAddItemSheet.toggle()
-                    } label: {
-                        Label("Add Item", systemImage: "plus")
-                    }
+                    .navigationSplitViewColumnWidth(min: 250, ideal: 300)
                     .foregroundStyle(.green)
-                }
-                ToolbarItem {
-                    Button {
-                        showTodayOnly.toggle()
-                    } label: {
-                        Image(systemName: showTodayOnly ? "calendar.badge.checkmark" : "line.3.horizontal.decrease")
-                    }
-                }
-                ToolbarItem {
-                    Button {
-                        self.importItems()
-                    } label: {
-                        Image(systemName: "square.and.arrow.down")
-                    }
-                }
-                
-                ToolbarItem {
-                    Button {
-                        self.deleteAllItems()
-                    } label: {
-                        Image(systemName: "trash")
-                    }
-                }
-            }
-            .sheet(isPresented: $showAddItemSheet) {
-                AddFeedSheetView()
-                    .presentationDetents([.medium])
-            }
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
 #endif
-            .navigationTitle("Feeds")
+                    .toolbar {
+#if os(iOS)
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            EditButton()
+                                .foregroundStyle(.green)
+                        }
+#endif
+                        ToolbarItem {
+                            Button {
+                                self.showAddItemSheet.toggle()
+                            } label: {
+                                Label("Add Item", systemImage: "plus")
+                            }
+                            .foregroundStyle(.green)
+                        }
+                        ToolbarItem {
+                            Button {
+                                showTodayOnly.toggle()
+                            } label: {
+                                Text(showTodayOnly ? "Show All" : "Show Today")
+                            }
+                        }
+                        ToolbarItem {
+                            Button {
+                                self.importItems()
+                            } label: {
+                                Image(systemName: "square.and.arrow.down")
+                            }
+                        }
+                        
+                        ToolbarItem {
+                            Button {
+                                self.deleteAllItems()
+                            } label: {
+                                Image(systemName: "trash")
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showAddItemSheet) {
+                        AddFeedSheetView()
+                            .presentationDetents([.medium])
+                    }
+#if os(iOS)
+                    .navigationBarTitleDisplayMode(.large)
+#endif
+                    .navigationTitle("Feeds")
+            }
         } detail: {
             FeedDetailView(items: self.items)
         }

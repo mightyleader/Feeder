@@ -22,19 +22,17 @@ struct FeedsView: View {
     var body: some View {
         VStack {
             List {
-                ForEach(structuredData(fromFeeds: self.feeds)) { day in
-                    Section(header:HStack {Text(day.date,format: Date.FormatStyle(date: .abbreviated,time: .none))
-                        Text(String(day.feeds.count))})
-                    {
-                        ForEach(day.feeds) { feed in
-                            HStack {
-                                Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .standard))").foregroundStyle(.gray)
-                                FeedLabel(qtys: feed.qty_ml)
-                                SourceLabel(source: feed.source)
-                            }
+                ForEach(self.feeds) { feed in
+//                    NavigationLink {
+//                        FeedDetailView(items: self.feeds)
+//                    } label: {
+                        HStack {
+                            Text("\(feed.timestamp, format: Date.FormatStyle(date: .none, time: .standard))").foregroundStyle(.gray)
+                            Spacer()
+                            SourceLabel(source: feed.source)
+                            FeedLabel(qtys: feed.qty_ml)
                         }
-                        .foregroundStyle(.gray)
-                    }
+//                    }
                 }
             }
             TotalView(qty_ml: total(items: self.feeds))
