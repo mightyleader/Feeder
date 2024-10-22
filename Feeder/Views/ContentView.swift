@@ -53,14 +53,6 @@ struct ContentView: View {
                         }
                         ToolbarItem {
                             Button {
-                                self.importItems()
-                            } label: {
-                                Image(systemName: "square.and.arrow.down")
-                            }
-                        }
-                        
-                        ToolbarItem {
-                            Button {
                                 self.deleteAllItems()
                             } label: {
                                 Image(systemName: "trash")
@@ -89,78 +81,6 @@ struct ContentView: View {
 }
 
 extension ContentView {
-    
-    // TEST DATA
-    private func importItems() {
-        let historyData = [
-            Feed(timestamp: Date(timeIntervalSince1970: 1725166800),
-                 qty_ml: .five,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725253200),
-                 qty_ml: .ten,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725339600),
-                 qty_ml: .fifteen,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725426000),
-                 qty_ml: .twenty,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725512400),
-                 qty_ml: .twentyfive,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725598800),
-                 qty_ml: .thirty,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725685200),
-                 qty_ml: .thirtyfive,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725771600),
-                 qty_ml: .forty,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725858000),
-                 qty_ml: .fortyfive,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1725944400),
-                 qty_ml: .fifty,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726030800),
-                 qty_ml: .fiftyfive,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726117200),
-                 qty_ml: .sixty,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726203600),
-                 qty_ml: .sixtyfive,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726290000),
-                 qty_ml: .seventy,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726376400),
-                 qty_ml: .seventyfive,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726462800),
-                 qty_ml: .eighty,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726549200),
-                 qty_ml: .eightyfive,
-                 source: .formula_enriched),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726635600),
-                 qty_ml: .ninety,
-                 source: .formula_standard),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726722000),
-                 qty_ml: .ninetyfive,
-                 source: .breast),
-            Feed(timestamp: Date(timeIntervalSince1970: 1726808400),
-                 qty_ml: .onehundred,
-                 source: .formula_standard)
-            ]
-        
-        withAnimation {
-            for item in historyData {
-                modelContext.insert(item)
-            }
-        }
-    }
     
     private func deleteAllItems() {
         withAnimation {

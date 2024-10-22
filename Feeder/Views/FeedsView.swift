@@ -13,7 +13,6 @@ struct FeedsView: View {
     @Query private var feeds: [Feed]
 
     init(limitingDate: Date) {
-        print("0. FeedsView init called")
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
         }, sort: \Feed.timestamp)
@@ -34,6 +33,7 @@ struct FeedsView: View {
                         }
 //                    }
                 }
+                .onDelete(perform: deleteItems)
             }
             TotalView(qty_ml: total(items: self.feeds))
         }
