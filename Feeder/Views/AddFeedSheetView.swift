@@ -18,13 +18,21 @@ struct AddFeedSheetView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button {
+                    self.dismiss()
+                } label: {
+                    Label("", systemImage: "xmark")
+                }
+            }
             DatePicker(
                     "Feed Date",
                     selection: $date,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             .datePickerStyle(.graphical)
-            .foregroundStyle(.green)
+            .tint(.green)
             
             HStack {
                 Spacer()
@@ -33,6 +41,7 @@ struct AddFeedSheetView: View {
                         Text("\(qty.rawValue) ml")
                     }
                 }
+                .tint(.green)
 #if os(macOS)
                 .pickerStyle(MenuPickerStyle())
 #endif
@@ -53,7 +62,7 @@ struct AddFeedSheetView: View {
                     }
                 }
                 .pickerStyle(InlinePickerStyle())
-                .foregroundStyle(.green)
+                .tint(.green)
                 .font(.headline)
                 .fontWeight(.heavy)
                 Spacer()

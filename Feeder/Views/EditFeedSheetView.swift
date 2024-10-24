@@ -15,6 +15,14 @@ struct EditFeedSheetView: View {
     
     var body: some View {
         VStack {
+            HStack {
+                Spacer()
+                Button {
+                    self.dismiss()
+                } label: {
+                    Label("", systemImage: "xmark")
+                }
+            }
             DatePicker(
                     "Feed Date",
                     selection: $feed.timestamp,

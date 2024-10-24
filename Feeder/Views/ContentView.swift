@@ -13,8 +13,9 @@ struct ContentView: View {
     
     @State private var showTodayOnly: Bool = true
     @State private var showAddItemSheet: Bool = false
+    @State private var showStatSheet: Bool = false
     
-    @Query(sort: \Feed.timestamp, order: .forward) private var items: [Feed]
+    @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     var calendar: Calendar = .autoupdatingCurrent
     var limitingDate: Date {
@@ -32,8 +33,12 @@ struct ContentView: View {
                     .toolbar {
 #if os(iOS)
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            EditButton()
-                                .foregroundStyle(.green)
+                            Button {
+                                self.showStatSheet.toggle()
+                            } label: {
+                                Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
                         }
 #endif
                         ToolbarItem {
@@ -42,7 +47,7 @@ struct ContentView: View {
                             } label: {
                                 Label("Add Item", systemImage: "plus")
                             }
-                            .foregroundStyle(.green)
+                            .tint(.green)
                         }
                         ToolbarItem {
                             Button {
@@ -51,25 +56,34 @@ struct ContentView: View {
                                 Text(showTodayOnly ? "Show All" : "Show Today")
                             }
                         }
-                        ToolbarItem {
-                            Button {
-                                self.deleteAllItems()
-                            } label: {
-                                Image(systemName: "trash")
-                            }
-                        }
+//                        ToolbarItem {
+//                            Button {
+//                                self.deleteAllItems()
+//                            } label: {
+//                                Image(systemName: "trash")
+//                            }
+//                        }
                     }
                     .sheet(isPresented: $showAddItemSheet) {
                         AddFeedSheetView()
                             .presentationDetents([.large])
                     }
+                    .sheet(isPresented: $showStatSheet, content: {
+                        StatsSheetView(limitingDate: self.limitingDate)
+                            .presentationDetents([.large])
+                    })
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
 #endif
                     .navigationTitle("Feeds")
             }
         } detail: {
+#if os(macOS)
             FeedDetailView()
+#endif
+#if os(iOS)
+            
+#endif
         }
         .foregroundStyle(.green)
     }
@@ -84,8 +98,8 @@ extension ContentView {
     
     private func deleteAllItems() {
         withAnimation {
-            for index in self.items.indices {
-                modelContext.delete(items[index])
+            for index in self.feeds.indices {
+                modelContext.delete(feeds[index])
             }
         }
     }
