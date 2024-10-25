@@ -40,6 +40,20 @@ struct ContentView: View {
                             }
                             .tint(.green)
                         }
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else {
+                                   return
+                                }
+                                if UIApplication.shared.canOpenURL(url) {
+                                   UIApplication.shared.open(url, options: [:])
+                                }
+                            } label: {
+                                Label("Settings", systemImage: "gear")
+                            }
+                            .tint(.green)
+                        }
 #endif
                         ToolbarItem {
                             Button {
@@ -49,20 +63,14 @@ struct ContentView: View {
                             }
                             .tint(.green)
                         }
-                        ToolbarItem {
+                        
+                        ToolbarItem(placement: .navigationBarLeading) {
                             Button {
                                 showTodayOnly.toggle()
                             } label: {
                                 Text(showTodayOnly ? "Show All" : "Show Today")
                             }
                         }
-//                        ToolbarItem {
-//                            Button {
-//                                self.deleteAllItems()
-//                            } label: {
-//                                Image(systemName: "trash")
-//                            }
-//                        }
                     }
                     .sheet(isPresented: $showAddItemSheet) {
                         AddFeedSheetView()

@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct TotalView: View {
+    @AppStorage("feedTarget") private var feedTarget: Double?
     var qty_ml: Int = 0
     var highlightTarget: Bool
+
+    
     var body: some View {
         HStack {
             Text("🍼")
@@ -23,7 +26,7 @@ struct TotalView: View {
             Text("\(qty_ml) ml")
                 .font(.title)
                 .fontWeight(.heavy)
-                .foregroundColor(highlightTarget ? ( qty_ml >= 500 ? .green : .red) : .primary)
+                .foregroundColor(highlightTarget ? ( qty_ml >= /*self.dailyFeedTarget*/ Int(feedTarget ?? 500) ? .green : .red) : .primary)
                 .padding()
         }
     }
