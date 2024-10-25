@@ -86,6 +86,7 @@ struct ContentView: View {
 #endif
         }
         .foregroundStyle(.green)
+        .tint(.green)
     }
 }
 
