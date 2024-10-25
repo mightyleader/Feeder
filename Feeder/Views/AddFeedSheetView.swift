@@ -26,6 +26,8 @@ struct AddFeedSheetView: View {
                     Label("", systemImage: "xmark")
                 }
             }
+            .padding()
+            
             DatePicker(
                     "Feed Date",
                     selection: $date,
@@ -41,7 +43,6 @@ struct AddFeedSheetView: View {
                         Text("\(qty.rawValue) ml")
                     }
                 }
-                .tint(.green)
 #if os(macOS)
                 .pickerStyle(MenuPickerStyle())
 #endif
@@ -49,7 +50,7 @@ struct AddFeedSheetView: View {
                 .pickerStyle(WheelPickerStyle())
                 .font(.headline)
                 .fontWeight(.heavy)
-                .foregroundStyle(.green)
+                .tint(.green)
 #endif
                 Spacer()
             }
@@ -75,7 +76,7 @@ struct AddFeedSheetView: View {
             .fontWeight(.heavy)
             .buttonStyle(.borderedProminent)
             .foregroundStyle(.white)
-            .background(.green)
+            .tint(.green)
             Spacer()
         }
     }
