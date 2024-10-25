@@ -15,21 +15,13 @@ struct EditFeedSheetView: View {
     
     var body: some View {
         VStack {
-            HStack {
-                Spacer()
-                Button {
-                    self.dismiss()
-                } label: {
-                    Label("", systemImage: "xmark")
-                }
-            }
             DatePicker(
                     "Feed Date",
                     selection: $feed.timestamp,
                     displayedComponents: [.date, .hourAndMinute]
                 )
             .datePickerStyle(.graphical)
-            .foregroundStyle(.green)
+            .tint(.green)
             
             HStack {
                 Spacer()
@@ -45,7 +37,7 @@ struct EditFeedSheetView: View {
                 .pickerStyle(WheelPickerStyle())
                 .font(.headline)
                 .fontWeight(.heavy)
-                .foregroundStyle(.green)
+                .tint(.green)
 #endif
                 Spacer()
             }
@@ -58,9 +50,9 @@ struct EditFeedSheetView: View {
                     }
                 }
                 .pickerStyle(InlinePickerStyle())
-                .foregroundStyle(.green)
                 .font(.headline)
                 .fontWeight(.heavy)
+                .tint(.green)
                 Spacer()
             }
             
@@ -71,7 +63,7 @@ struct EditFeedSheetView: View {
             .fontWeight(.heavy)
             .buttonStyle(.borderedProminent)
             .foregroundStyle(.white)
-            .background(.green)
+            .tint(.green)
             Spacer()
         }
     }
