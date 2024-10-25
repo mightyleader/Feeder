@@ -44,7 +44,7 @@ struct FeedsView: View {
                 }
                 .onDelete(perform: deleteItems)
             }
-            TotalView(qty_ml: total(items: self.feeds))
+            TotalView(qty_ml: total(items: self.feeds), highlightTarget: showTodayOnly)
         }
     }
     
