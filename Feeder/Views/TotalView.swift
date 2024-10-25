@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TotalView: View {
     var qty_ml: Int = 0
+    var highlightTarget: Bool
     var body: some View {
         HStack {
             Text("🍼")
@@ -22,12 +23,12 @@ struct TotalView: View {
             Text("\(qty_ml) ml")
                 .font(.title)
                 .fontWeight(.heavy)
-                .foregroundColor(qty_ml >= 500 ? .green : .red)
+                .foregroundColor(highlightTarget ? ( qty_ml >= 500 ? .green : .red) : .primary)
                 .padding()
         }
     }
 }
 
 #Preview {
-    TotalView()
+    TotalView(highlightTarget: true)
 }
