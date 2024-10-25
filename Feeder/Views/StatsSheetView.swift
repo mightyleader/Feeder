@@ -33,9 +33,12 @@ struct StatsSheetView: View {
     
     var limitingDate: Date
     var avg_feed: Double {
-        Double(feeds.reduce(0) {
-            $0 + $1.qty_as_int
-        } / feeds.count)
+        if !feeds.isEmpty {
+            return Double(feeds.reduce(0) {
+                $0 + $1.qty_as_int
+            } / feeds.count)
+        }
+        return 0
     }
     
     init(limitingDate: Date) {
@@ -67,8 +70,7 @@ struct StatsSheetView: View {
                     .annotation(position: .overlay) {
                         Text(String("\(sourceStat.total_qty)ml"))
                                 .foregroundStyle(.white)
-                                .font(.headline)
-                        }
+                        .fontWeight(.semibold)                        }
                         .cornerRadius(10.0)
                         .foregroundStyle(by: .value("Source", sourceStat.source.rawValue))
                 }
@@ -79,14 +81,15 @@ struct StatsSheetView: View {
               GeometryReader { geometry in
                 if let anchor = chartProxy.plotFrame {
                   let frame = geometry[anchor]
-                  Text("Feed size by source")
+                    Text("Feed size by source\nTotal feed \(feeds.reduce(0) { $0 + $1.qty_as_int })ml")
+                    .multilineTextAlignment(.center)
                     .position(x: frame.midX, y: frame.midY)
                     .font(.headline)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.secondary)
                 }
               }
             }
-            Spacer()
+            Spacer(minLength: 15.0)
             //bar or line - histogram
             Chart {
                 ForEach(feeds) { feed in
@@ -94,7 +97,7 @@ struct StatsSheetView: View {
                             y: .value("Feed in ml", feed.qty_as_int))
                     .annotation(position: .top) {
                         Text("\(String(feed.qty_as_int))ml")
-                            .foregroundStyle(.black)
+                            .foregroundStyle(.secondary)
                             .font(.system(size: 10.0))
                             .fontWeight(.semibold)
                     }
@@ -110,10 +113,12 @@ struct StatsSheetView: View {
                         }
                 }
             }
+            .chartScrollableAxes(.horizontal)
+            .chartXVisibleDomain(length: 6)
             .chartLegend(alignment: .top, spacing: 10){
                 Text("Feed history")
                     .font(.headline)
-                    .foregroundStyle(.black)
+                    .foregroundStyle(.secondary)
             }
             .scaledToFit()
             .chartYAxisLabel {
@@ -147,9 +152,18 @@ extension StatsSheetView {
         let formulaFeeds = feeds.filter { $0.source == .formula_standard }
         let enrichedFeeds = feeds.filter { $0.source == .formula_enriched }
         
-        return [SourceStat(source: .breast, feeds: breastFeeds),
-                SourceStat(source: .formula_standard, feeds: formulaFeeds),
-                SourceStat(source: .formula_enriched, feeds: enrichedFeeds)]
+        var sources: [SourceStat] = []
+        if breastFeeds.count > 0 {
+            sources.append(SourceStat(source: .breast, feeds: breastFeeds))
+        }
+        if formulaFeeds.count > 0 {
+            sources.append(SourceStat(source: .formula_standard, feeds: formulaFeeds))
+        }
+        if enrichedFeeds.count > 0 {
+            sources.append(SourceStat(source: .formula_enriched, feeds: enrichedFeeds))
+        }
+        
+        return sources
     }
 }
 
