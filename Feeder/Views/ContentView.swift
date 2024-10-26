@@ -15,6 +15,11 @@ struct ContentView: View {
     @State private var showAddItemSheet: Bool = false
     @State private var showStatSheet: Bool = false
     
+    //File importing...
+    @State private var text = ""
+    @State private var error: Error?
+    @State private var isImporting = false
+    
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     var calendar: Calendar = .autoupdatingCurrent
@@ -32,14 +37,6 @@ struct ContentView: View {
 #endif
                     .toolbar {
 #if os(iOS)
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                self.showStatSheet.toggle()
-                            } label: {
-                                Label("Details", systemImage: "chart.pie.fill")
-                            }
-                            .tint(.green)
-                        }
                         
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button {
@@ -55,6 +52,24 @@ struct ContentView: View {
                             .tint(.green)
                         }
 #endif
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                self.showStatSheet.toggle()
+                            } label: {
+                                Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
+                        }
+                        
+//                        ToolbarItem(placement: .navigationBarTrailing) {
+//                            Button {
+//                                isImporting = true
+//                            } label: {
+//                                Label("Import",
+//                                      systemImage: "square.and.arrow.down")
+//                            }
+//                        }
+                        
                         ToolbarItem {
                             Button {
                                 self.showAddItemSheet.toggle()
@@ -84,6 +99,9 @@ struct ContentView: View {
                     .navigationBarTitleDisplayMode(.large)
 #endif
                     .navigationTitle("Feeds")
+                    .fileImporter(isPresented: $isImporting, allowedContentTypes: [.text, .commaSeparatedText]) { result in
+                        //
+                    }
             }
         } detail: {
 #if os(macOS)
