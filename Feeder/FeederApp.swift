@@ -11,9 +11,7 @@ import SwiftData
 @main
 struct FeederApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Feed.self, Note.self
-        ])
+        let schema = Schema([Feed.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {

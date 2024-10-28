@@ -38,7 +38,7 @@ struct FeedsView: View {
                             Text("\(feed.timestamp, format: showTodayOnly ? todayFormat : historyFormat)").foregroundStyle(.gray)
                             Spacer()
                             SourceLabel(source: feed.source)
-                            FeedLabel(qtys: feed.qty_ml)
+                            FeedLabel(qty: feed.qty_as_int)
                         }
                     }
                 }
@@ -50,7 +50,7 @@ struct FeedsView: View {
     
     private func total(items: [Feed]) -> Int {
         items.map { item in
-            Int(item.qty_ml.rawValue)!
+            item.qty_as_int
         }.reduce(0, +)
     }
     

@@ -25,9 +25,9 @@ struct EditFeedSheetView: View {
             
             HStack {
                 Spacer()
-                Picker("Feed", selection: $feed.qty_ml) {
-                    ForEach(Quantities.allCases) { qty in
-                        Text("\(qty.rawValue) ml")
+                Picker("Feed", selection: $feed.qty_as_int) {
+                    ForEach(0..<2000) { qty in
+                        Text("\(qty) ml")
                     }
                 }
 #if os(macOS)

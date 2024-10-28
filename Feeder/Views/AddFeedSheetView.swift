@@ -10,7 +10,7 @@ import SwiftData
 
 struct AddFeedSheetView: View {
     @Environment(\.modelContext) private var modelContext
-    @State var qty: Quantities = .zero
+    @State var qty: Int = 0
     @State var source: Source = .formula_standard
     @State var date: Date = Date()
     
@@ -38,9 +38,14 @@ struct AddFeedSheetView: View {
             
             HStack {
                 Spacer()
+//                Picker("Feed", selection: $qty) {
+//                    ForEach(Quantities.allCases) { qty in
+//                        Text("\(qty.rawValue) ml")
+//                    }
+//                }
                 Picker("Feed", selection: $qty) {
-                    ForEach(Quantities.allCases) { qty in
-                        Text("\(qty.rawValue) ml")
+                    ForEach(0..<2000) { qty in
+                        Text("\(qty) ml")
                     }
                 }
 #if os(macOS)
@@ -83,7 +88,7 @@ struct AddFeedSheetView: View {
     
     private func addItem() {
         withAnimation {
-            let newItem = Feed(timestamp: date, qty_ml:qty, source: source)
+            let newItem = Feed(timestamp: date, qty_as_int:qty, source: source)
             modelContext.insert(newItem)
             self.dismiss()
         }
