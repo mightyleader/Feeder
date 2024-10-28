@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var text = ""
     @State private var error: Error?
     @State private var isImporting = false
+    @State private var isExporting = false
     
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
@@ -37,7 +38,6 @@ struct ContentView: View {
 #endif
                     .toolbar {
 #if os(iOS)
-                        
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button {
                                 guard let url = URL(string: UIApplication.openSettingsURLString) else {
@@ -61,15 +61,28 @@ struct ContentView: View {
                             .tint(.green)
                         }
                         
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                isImporting = true
+                            } label: {
+                                Label("Import Data",
+                                      systemImage: "square.and.arrow.down")
+                            }
+                        }
+                        
 //                        ToolbarItem(placement: .navigationBarTrailing) {
 //                            Button {
-//                                isImporting = true
+//                                isExporting = true
 //                            } label: {
-//                                Label("Import",
-//                                      systemImage: "square.and.arrow.down")
+//                                Label("Share Data",
+//                                      systemImage: "square.and.arrow.up")
 //                            }
 //                        }
-                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            let url = self.exportAllItems()
+                            ShareLink(item: url!)
+                        }
+                    
                         ToolbarItem {
                             Button {
                                 self.showAddItemSheet.toggle()
@@ -102,6 +115,7 @@ struct ContentView: View {
                     .fileImporter(isPresented: $isImporting, allowedContentTypes: [.text, .commaSeparatedText]) { result in
                         //
                     }
+                    
             }
         } detail: {
 #if os(macOS)
@@ -121,7 +135,7 @@ struct ContentView: View {
         .modelContainer(for: Feed.self, inMemory: true)
 }
 
-extension ContentView {
+extension ContentView { //DATA MANAGEMENT
     
     private func deleteAllItems() {
         withAnimation {
@@ -129,6 +143,29 @@ extension ContentView {
                 modelContext.delete(feeds[index])
             }
         }
+    }
+    
+    private func exportAllItems() -> URL? {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
+        }
+        let fileURL = url.appendingPathComponent("Feeder Data-\(Date.now.description).csv")
+        do {
+            var stringOfFeeds: String = ""
+            for feed in feeds {
+                stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.timestamp), \(feed.qty_as_int), \(feed.source.rawValue)\n")
+            }
+            if let dataOfFeeds = stringOfFeeds.data(using: .utf8) {
+                if dataOfFeeds.count > 0
+                    /*&& !FileManager.default.fileExists(atPath: fileURL.path)*/ {
+                    try dataOfFeeds.write(to: fileURL)
+                    return fileURL
+                }
+            }
+        } catch {
+            print("Error exporting: \(error)")
+        }
+        return nil
     }
 }
 
