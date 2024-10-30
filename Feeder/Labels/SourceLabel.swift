@@ -18,9 +18,9 @@ struct SourceLabel: View {
         case .breast:
             self.color = .pink
         case .formula_enriched:
-            self.color = .yellow
+            self.color = .red
         case .formula_standard:
-            self.color = .green
+            self.color = .orange
         }
     }
     
@@ -29,6 +29,7 @@ struct SourceLabel: View {
             .background(self.color)
             .foregroundStyle(.white)
             .cornerRadius(5.0)
+            .font(.callout)
             .fontWeight(.heavy)
     }
 }

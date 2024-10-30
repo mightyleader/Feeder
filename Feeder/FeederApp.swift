@@ -11,9 +11,7 @@ import SwiftData
 @main
 struct FeederApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
+        let schema = Schema([Feed.self])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
         do {
@@ -27,6 +25,7 @@ struct FeederApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .foregroundStyle(.green)
         }
         .modelContainer(sharedModelContainer)
     }

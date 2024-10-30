@@ -10,55 +10,91 @@ import SwiftData
 
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Item.timestamp, order: .forward) private var items: [Item]
+    @Query private var feeds: [Feed]
     
-    init(limitingDate: Date) {
-        _items = Query(filter: #Predicate<Item> { item in
-            item.timestamp >= limitingDate
-        }, sort: \Item.timestamp)
+    private var todayFormat: Date.FormatStyle = Date.FormatStyle(date: .none,
+                                                                 time: .standard)
+    private var historyFormat: Date.FormatStyle = Date.FormatStyle(date: .complete,
+                                                                   time: .shortened)
+    
+    private var showTodayOnly: Bool
+                            
+
+    init(limitingDate: Date, showTodayOnly: Bool) {
+        self.showTodayOnly = showTodayOnly
+        _feeds = Query(filter: #Predicate<Feed> { feed in
+            feed.timestamp >= limitingDate
+        }, sort: \Feed.timestamp)
     }
     
     var body: some View {
         VStack {
             List {
-                ForEach(items) { item in
+                ForEach(self.feeds) { feed in
                     NavigationLink {
-                        VStack {
-                            Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
-                                .font(.headline)
-                            FeedLabel(qtys: item.qty_ml)
-                            SourceLabel(source: item.source)
-                        }
-                        .padding()
+                        EditFeedSheetView(feed: feed)
                     } label: {
                         HStack {
-                            Text("\(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                            FeedLabel(qtys: item.qty_ml)
-                            SourceLabel(source: item.source)
+                            Text("\(feed.timestamp, format: showTodayOnly ? todayFormat : historyFormat)").foregroundStyle(.gray)
+                            Spacer()
+                            SourceLabel(source: feed.source)
+                            FeedLabel(qty: feed.qty_as_int)
                         }
                     }
                 }
                 .onDelete(perform: deleteItems)
             }
-            TotalView(qty_ml: total(items: self.items))
+            TotalView(qty_ml: total(items: self.feeds), highlightTarget: showTodayOnly)
         }
     }
     
-    private func total(items: [Item]) -> Int {
+    private func total(items: [Feed]) -> Int {
         items.map { item in
-            Int(item.qty_ml.rawValue)!
+            item.qty_as_int
         }.reduce(0, +)
     }
     
     private func deleteItems(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
-                modelContext.delete(items[index])
+                modelContext.delete(feeds[index])
             }
         }
     }
 }
 
+extension FeedsView {
+    
+    private func setOfDays(fromFeeds feeds: [Feed]) -> [Date] {
+        let dates = feeds.map { feed in
+            Calendar.autoupdatingCurrent.startOfDay(for: feed.timestamp)
+        }
+        return Array(Set(dates))
+    }
+    
+    private func structuredData(fromFeeds feeds: [Feed]) -> [Day] {
+        let dates = setOfDays(fromFeeds: feeds)
+        var returnStructuredData = Set<Day>()
+        for date in dates {
+            returnStructuredData.insert(Day(date: date,
+                                            feeds: self.match(Date: date,
+                                                              toFeeds: feeds)))
+            
+        }
+        return Array(returnStructuredData).sorted { $0.date > $1.date }
+    }
+    
+    private func match(Date date: Date, toFeeds feeds: [Feed]) -> [Feed] {
+        var matchingFeeds = [Feed]()
+        for feed in feeds {
+            if Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: date) {
+                matchingFeeds.append(feed)
+            }
+        }
+        return matchingFeeds
+    }
+}
+
 #Preview {
-    FeedsView(limitingDate: Date.distantPast)
+    FeedsView(limitingDate: Date.distantPast, showTodayOnly: true)
 }

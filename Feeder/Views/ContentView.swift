@@ -13,205 +13,159 @@ struct ContentView: View {
     
     @State private var showTodayOnly: Bool = true
     @State private var showAddItemSheet: Bool = false
+    @State private var showStatSheet: Bool = false
     
-    @Query(sort: \Item.timestamp, order: .forward) private var items: [Item]
+    //File importing...
+    @State private var text = ""
+    @State private var error: Error?
+    @State private var isImporting = false
+    @State private var isExporting = false
+    
+    @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     var calendar: Calendar = .autoupdatingCurrent
     var limitingDate: Date {
-        return self.showTodayOnly ? Date(timeIntervalSince1970: 1726808400) : .distantPast
+        return self.showTodayOnly ? Calendar.autoupdatingCurrent.startOfDay(for:Date.now) : .distantPast
     }
     
     var body: some View {
         NavigationSplitView {
-            FeedsView(limitingDate: self.limitingDate)
-//            VStack {
-//                List {
-//                    ForEach(items) { item in
-//                        NavigationLink {
-//                            VStack {
-//                                Text("\(item.timestamp, format: Date.FormatStyle(date: .complete, time: .standard))")
-//                                    .font(.headline)
-//                                FeedLabel(qtys: item.qty_ml)
-//                                SourceLabel(source: item.source)
-//                            }
-//                            .padding()
-//                        } label: {
-//                            HStack {
-//                                Text("\(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-//                                FeedLabel(qtys: item.qty_ml)
-//                                SourceLabel(source: item.source)
+            VStack {
+                FeedsView(limitingDate: self.limitingDate, showTodayOnly: self.showTodayOnly)
+#if os(macOS)
+                    .navigationSplitViewColumnWidth(min: 250, ideal: 300)
+                    .foregroundStyle(.green)
+#endif
+                    .toolbar {
+#if os(iOS)
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else {
+                                   return
+                                }
+                                if UIApplication.shared.canOpenURL(url) {
+                                   UIApplication.shared.open(url, options: [:])
+                                }
+                            } label: {
+                                Label("Settings", systemImage: "gear")
+                            }
+                            .tint(.green)
+                        }
+#endif
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                self.showStatSheet.toggle()
+                            } label: {
+                                Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                isImporting = true
+                            } label: {
+                                Label("Import Data",
+                                      systemImage: "square.and.arrow.down")
+                            }
+                        }
+                        
+//                        ToolbarItem(placement: .navigationBarTrailing) {
+//                            Button {
+//                                isExporting = true
+//                            } label: {
+//                                Label("Share Data",
+//                                      systemImage: "square.and.arrow.up")
 //                            }
 //                        }
-//                    }
-//                    .onDelete(perform: deleteItems)
-//                }
-//                TotalView(qty_ml: total(items: self.items))
-//            }
-#if os(macOS)
-            .navigationSplitViewColumnWidth(min: 250, ideal: 300)
-            .foregroundStyle(.green)
-#endif
-            .toolbar {
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            let url = self.exportAllItems()
+                            ShareLink(item: url!)
+                        }
+                    
+                        ToolbarItem {
+                            Button {
+                                self.showAddItemSheet.toggle()
+                            } label: {
+                                Label("Add Item", systemImage: "plus")
+                            }
+                            .tint(.green)
+                        }
+                        
+                        ToolbarItem(placement: .navigationBarLeading) {
+                            Button {
+                                showTodayOnly.toggle()
+                            } label: {
+                                Text(showTodayOnly ? "Show All" : "Show Today")
+                            }
+                        }
+                    }
+                    .sheet(isPresented: $showAddItemSheet) {
+                        AddFeedSheetView()
+                            .presentationDetents([.large])
+                    }
+                    .sheet(isPresented: $showStatSheet, content: {
+                        StatsSheetView(limitingDate: self.limitingDate)
+                            .presentationDetents([.large])
+                    })
 #if os(iOS)
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                        .foregroundStyle(.green)
-                }
+                    .navigationBarTitleDisplayMode(.large)
 #endif
-                ToolbarItem {
-                    Button {
-                        self.showAddItemSheet.toggle()
-                    } label: {
-                        Label("Add Item", systemImage: "plus")
+                    .navigationTitle("Feeds")
+                    .fileImporter(isPresented: $isImporting, allowedContentTypes: [.text, .commaSeparatedText]) { result in
+                        //
                     }
-                    .foregroundStyle(.green)
-                }
-                ToolbarItem {
-                    Button {
-                        showTodayOnly.toggle()
-                    } label: {
-                        Image(systemName: showTodayOnly ? "calendar.badge.checkmark" : "line.3.horizontal.decrease")
-                    }
-                }
-                ToolbarItem {
-                    Button {
-                        self.importItems()
-                    } label: {
-                        Image(systemName: "square.and.arrow.down")
-                    }
-                }
-                
-                ToolbarItem {
-                    Button {
-                        self.deleteAllItems()
-                    } label: {
-                        Image(systemName: "trash")
-                    }
-                }
+                    
             }
-            .sheet(isPresented: $showAddItemSheet) {
-                AddFeedSheetView()
-                    .presentationDetents([.medium])
-            }
-#if os(iOS)
-            .navigationBarTitleDisplayMode(.large)
-#endif
-            .navigationTitle("Feeds")
         } detail: {
-            FeedDetailView(items: self.items)
+#if os(macOS)
+            FeedDetailView()
+#endif
+#if os(iOS)
+            
+#endif
         }
         .foregroundStyle(.green)
+        .tint(.green)
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: Feed.self, inMemory: true)
 }
 
-extension ContentView {
+extension ContentView { //DATA MANAGEMENT
     
-//    private mutating func filterByToday() {
-//        _items = Query(filter: #Predicate<Item> { item in
-//            item.timestamp >= limitingDate
-//        })
-//    }
-    
-//    private func total(items: [Item]) -> Int {
-//        items.map { item in
-//            Int(item.qty_ml.rawValue)!
-//        }.reduce(0, +)
-//    }
-    
-//    private func deleteItems(offsets: IndexSet) {
-//        withAnimation {
-//            for index in offsets {
-//                modelContext.delete(items[index])
-//            }
-//        }
-//    }
-}
-
-extension ContentView {
-    
-    // TEST DATA
-    private func importItems() {
-        let historyData = [
-            Item(timestamp: Date(timeIntervalSince1970: 1725166800),
-                 qty_ml: .five,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725253200),
-                 qty_ml: .ten,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725339600),
-                 qty_ml: .fifteen,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725426000),
-                 qty_ml: .twenty,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725512400),
-                 qty_ml: .twentyfive,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725598800),
-                 qty_ml: .thirty,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725685200),
-                 qty_ml: .thirtyfive,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1725771600),
-                 qty_ml: .forty,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1725858000),
-                 qty_ml: .fortyfive,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1725944400),
-                 qty_ml: .fifty,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726030800),
-                 qty_ml: .fiftyfive,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726117200),
-                 qty_ml: .sixty,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726203600),
-                 qty_ml: .sixtyfive,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726290000),
-                 qty_ml: .seventy,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726376400),
-                 qty_ml: .seventyfive,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726462800),
-                 qty_ml: .eighty,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726549200),
-                 qty_ml: .eightyfive,
-                 source: .formula_enriched),
-            Item(timestamp: Date(timeIntervalSince1970: 1726635600),
-                 qty_ml: .ninety,
-                 source: .formula_standard),
-            Item(timestamp: Date(timeIntervalSince1970: 1726722000),
-                 qty_ml: .ninetyfive,
-                 source: .breast),
-            Item(timestamp: Date(timeIntervalSince1970: 1726808400),
-                 qty_ml: .onehundred,
-                 source: .formula_standard)
-            ]
-        
+    private func deleteAllItems() {
         withAnimation {
-            for item in historyData {
-                modelContext.insert(item)
+            for index in self.feeds.indices {
+                modelContext.delete(feeds[index])
             }
         }
     }
     
-    private func deleteAllItems() {
-        withAnimation {
-            for index in self.items.indices {
-                modelContext.delete(items[index])
-            }
+    private func exportAllItems() -> URL? {
+        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+            return nil
         }
+        let fileURL = url.appendingPathComponent("Feeder Data-\(Date.now.description).csv")
+        do {
+            var stringOfFeeds: String = ""
+            for feed in feeds {
+                stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.timestamp), \(feed.qty_as_int), \(feed.source.rawValue)\n")
+            }
+            if let dataOfFeeds = stringOfFeeds.data(using: .utf8) {
+                if dataOfFeeds.count > 0
+                    /*&& !FileManager.default.fileExists(atPath: fileURL.path)*/ {
+                    try dataOfFeeds.write(to: fileURL)
+                    return fileURL
+                }
+            }
+        } catch {
+            print("Error exporting: \(error)")
+        }
+        return nil
     }
 }
 
