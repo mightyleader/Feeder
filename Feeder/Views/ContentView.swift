@@ -65,19 +65,20 @@ struct ContentView: View {
                             Button {
                                 isImporting = true
                             } label: {
-                                Label("Import Data",
+                                Label("Import...",
                                       systemImage: "square.and.arrow.down")
                             }
                         }
                         
-//                        ToolbarItem(placement: .navigationBarTrailing) {
-//                            Button {
-//                                isExporting = true
-//                            } label: {
-//                                Label("Share Data",
-//                                      systemImage: "square.and.arrow.up")
-//                            }
-//                        }
+                        ToolbarItem(placement: .navigationBarTrailing) {
+                            Button {
+                                self.migrationRoutine()
+                            } label: {
+                                Label("Migrate",
+                                      systemImage: "wrench.adjustable")
+                            }
+                        }
+                        
                         ToolbarItem(placement: .navigationBarTrailing) {
                             let url = self.exportAllItems()
                             ShareLink(item: url!)
@@ -153,7 +154,7 @@ extension ContentView { //DATA MANAGEMENT
         do {
             var stringOfFeeds: String = ""
             for feed in feeds {
-                stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.timestamp), \(feed.qty_as_int), \(feed.source.rawValue)\n")
+                stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.qty_ml.rawValue), \(feed.qty_as_int), \(feed.source.rawValue)\n")
             }
             if let dataOfFeeds = stringOfFeeds.data(using: .utf8) {
                 if dataOfFeeds.count > 0
@@ -166,6 +167,40 @@ extension ContentView { //DATA MANAGEMENT
             print("Error exporting: \(error)")
         }
         return nil
+    }
+    
+    private func migrationRoutine() {
+        for feed in feeds {
+            //Read from UserDefaults.
+            let defaults = UserDefaults.standard
+            let migrationComplete = defaults.bool(forKey: "migrationComplete")
+            print("Migration status: \(migrationComplete)")
+            
+            if migrationComplete == false {
+                for feed in self.feeds {
+                    //enum is non-zero and qty is 0 - Copy enum.rawvalue to qty
+                    if feed.qty_ml != .zero && feed.qty_as_int == 0 {
+                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). MIGRATING")
+                        if let intFromString = Int(feed.qty_ml.rawValue) {
+                            feed.qty_as_int = intFromString
+                        }
+                    } else {
+                        //enum is zero and qty is 0 - DO NOTHING
+                        //enum is zero and qty is > 0 - DO NOTHING
+                        //enum is non-zero and qty is > 0 - DO NOTHING
+                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). NOT MIGRATING")
+                    }
+                }
+                do {
+                    try? self.modelContext.save()
+                    print("Migration saved to persistent store.")
+                    defaults.set(true, forKey: "migrationComplete")
+                    print ("Migration status saved to UserDefaults.")
+                }
+            } else {
+                return
+            }
+        }
     }
 }
 
