@@ -14,6 +14,8 @@ struct ContentView: View {
     @State private var showTodayOnly: Bool = true
     @State private var showAddItemSheet: Bool = false
     @State private var showStatSheet: Bool = false
+    @State private var showImportError: Bool = false
+    @State private var showExportError: Bool = false
     
     //File importing...
     @State private var text = ""
@@ -37,53 +39,7 @@ struct ContentView: View {
                     .foregroundStyle(.green)
 #endif
                     .toolbar {
-#if os(iOS)
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                guard let url = URL(string: UIApplication.openSettingsURLString) else {
-                                   return
-                                }
-                                if UIApplication.shared.canOpenURL(url) {
-                                   UIApplication.shared.open(url, options: [:])
-                                }
-                            } label: {
-                                Label("Settings", systemImage: "gear")
-                            }
-                            .tint(.green)
-                        }
-#endif
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                self.showStatSheet.toggle()
-                            } label: {
-                                Label("Details", systemImage: "chart.pie.fill")
-                            }
-                            .tint(.green)
-                        }
-                        
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            Button {
-                                isImporting = true
-                            } label: {
-                                Label("Import Data",
-                                      systemImage: "square.and.arrow.down")
-                            }
-                        }
-                        
-//                        ToolbarItem(placement: .navigationBarTrailing) {
-//                            Button {
-//                                isExporting = true
-//                            } label: {
-//                                Label("Share Data",
-//                                      systemImage: "square.and.arrow.up")
-//                            }
-//                        }
-                        ToolbarItem(placement: .navigationBarTrailing) {
-                            let url = self.exportAllItems()
-                            ShareLink(item: url!)
-                        }
-                    
-                        ToolbarItem {
+                        ToolbarItem(placement: .primaryAction) {
                             Button {
                                 self.showAddItemSheet.toggle()
                             } label: {
@@ -99,6 +55,53 @@ struct ContentView: View {
                                 Text(showTodayOnly ? "Show All" : "Show Today")
                             }
                         }
+                        
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                self.showStatSheet.toggle()
+                            } label: {
+                                Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
+                        }
+                        
+                        ToolbarItem(placement: .secondaryAction) {
+                            Button {
+                                isImporting = true
+                            } label: {
+                                Label("Import",
+                                      systemImage: "square.and.arrow.down")
+                            }
+                        }
+                        
+                        ToolbarItem(placement: .secondaryAction) {
+                            if let url = self.exportAllItems() {
+                                ShareLink("Export", item: url)
+                            }
+                        }
+#if os(iOS)
+                        ToolbarItem(placement: .secondaryAction) {
+                            Button {
+                                guard let url = URL(string: UIApplication.openSettingsURLString) else {
+                                    return
+                                }
+                                if UIApplication.shared.canOpenURL(url) {
+                                    UIApplication.shared.open(url, options: [:])
+                                }
+                            } label: {
+                                Label("Settings", systemImage: "gear")
+                            }
+                            .tint(.green)
+                        }
+                        
+                        ToolbarItem(placement: .secondaryAction) {
+                            Button {
+                                self.deleteAllItems()
+                            } label: {
+                                Label("Delete All Data", systemImage: "trash")
+                            }
+                        }
+#endif
                     }
                     .sheet(isPresented: $showAddItemSheet) {
                         AddFeedSheetView()
@@ -108,14 +111,26 @@ struct ContentView: View {
                         StatsSheetView(limitingDate: self.limitingDate)
                             .presentationDetents([.large])
                     })
+                    .alert("Error importing data", isPresented: $showImportError) {
+                        //config
+                    }
+                    .alert("Error exporting data", isPresented: $showExportError, actions: {
+                        //config
+                    })
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
 #endif
                     .navigationTitle("Feeds")
-                    .fileImporter(isPresented: $isImporting, allowedContentTypes: [.text, .commaSeparatedText]) { result in
-                        //
+                    .fileImporter(isPresented: $isImporting,
+                                  allowedContentTypes: [.commaSeparatedText]) { result in
+                        switch result {
+                            case .success(let url):
+                                self.importFeeds(from: url)
+                            case .failure(let error):
+                                print(error.localizedDescription)
+                            // TODO: alert sheet
+                            }
                     }
-                    
             }
         } detail: {
 #if os(macOS)
@@ -164,6 +179,52 @@ extension ContentView { //DATA MANAGEMENT
             }
         } catch {
             print("Error exporting: \(error)")
+        }
+        return nil
+    }
+    
+    private func importFeeds(from url: URL) {
+        guard let data = try? Data(contentsOf: url) else {
+            return
+        }
+        guard let stringOfFeeds = String(data: data, encoding: .utf8) else {
+            return
+        }
+        let stringOfStringsOfFeeds = String(stringOfFeeds)
+        let arrayOfStrings = (stringOfStringsOfFeeds as String).split(separator: "\n")
+        let arrayOfFeeds = arrayOfStrings.map {
+            $0.split(separator: ",")
+        }
+        if arrayOfStrings.count > 0 && arrayOfFeeds[0].count == 5 {
+            let arrayOfFeedObjects = arrayOfFeeds.map {
+                Feed(timestamp: self.dateFrom(string: String($0[1])) ?? Date(),
+                     qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!,
+                     source: self.sourceFrom(rawValue: String($0[4])))
+            }
+            for feed in arrayOfFeedObjects {
+                self.modelContext.insert(feed)
+            }
+        }
+    }
+    
+    private func sourceFrom(rawValue: String) -> Source {
+        switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines) {
+        case "Breast Milk":
+            return .breast
+        case "Formula":
+            return .formula_standard
+        case "Formula Enriched":
+            return .formula_enriched
+        default:
+            return .formula_standard
+        }
+    }
+    
+    private func dateFrom(string: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        if let date = dateFormatter.date(from: string) {
+            return date
         }
         return nil
     }
