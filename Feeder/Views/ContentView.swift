@@ -113,9 +113,11 @@ struct ContentView: View {
                     })
                     .alert("Error importing data", isPresented: $showImportError) {
                         //config
+                        // TODO: alert sheet
                     }
                     .alert("Error exporting data", isPresented: $showExportError, actions: {
                         //config
+                        // TODO: alert sheet
                     })
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
@@ -128,7 +130,6 @@ struct ContentView: View {
                                 self.importFeeds(from: url)
                             case .failure(let error):
                                 print(error.localizedDescription)
-                            // TODO: alert sheet
                             }
                     }
             }
