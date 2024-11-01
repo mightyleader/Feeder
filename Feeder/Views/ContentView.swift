@@ -194,36 +194,34 @@ extension ContentView { //DATA MANAGEMENT
     }
     
     private func migrationRoutine() {
-        for feed in feeds {
-            //Read from UserDefaults.
-            let defaults = UserDefaults.standard
-            let migrationComplete = defaults.bool(forKey: "migrationComplete")
-            print("Migration status: \(migrationComplete)")
-            
-            if migrationComplete == false {
-                for feed in self.feeds {
-                    //enum is non-zero and qty is 0 - Copy enum.rawvalue to qty
-                    if feed.qty_ml != .zero && feed.qty_as_int == 0 {
-                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). MIGRATING")
-                        if let intFromString = Int(feed.qty_ml.rawValue) {
-                            feed.qty_as_int = intFromString
-                        }
-                    } else {
-                        //enum is zero and qty is 0 - DO NOTHING
-                        //enum is zero and qty is > 0 - DO NOTHING
-                        //enum is non-zero and qty is > 0 - DO NOTHING
-                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). NOT MIGRATING")
+        //Read from UserDefaults.
+        let defaults = UserDefaults.standard
+        let migrationComplete = defaults.bool(forKey: "migrationComplete")
+        print("Migration status: \(migrationComplete)")
+        
+        if migrationComplete == false {
+            for feed in self.feeds {
+                //enum is non-zero and qty is 0 - Copy enum.rawvalue to qty
+                if feed.qty_ml != .zero && feed.qty_as_int == 0 {
+                    print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). MIGRATING")
+                    if let intFromString = Int(feed.qty_ml.rawValue) {
+                        feed.qty_as_int = intFromString
                     }
+                } else {
+                    //enum is zero and qty is 0 - DO NOTHING
+                    //enum is zero and qty is > 0 - DO NOTHING
+                    //enum is non-zero and qty is > 0 - DO NOTHING
+                    print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). NOT MIGRATING")
                 }
-                do {
-                    try? self.modelContext.save()
-                    print("Migration saved to persistent store.")
-                    defaults.set(true, forKey: "migrationComplete")
-                    print ("Migration status saved to UserDefaults.")
-                }
-            } else {
-                return
             }
+            do {
+                try? self.modelContext.save()
+                print("Migration saved to persistent store.")
+                defaults.set(true, forKey: "migrationComplete")
+                print ("Migration status saved to UserDefaults.")
+            }
+        } else {
+            return
         }
     }
 
@@ -239,7 +237,7 @@ extension ContentView { //DATA MANAGEMENT
         let arrayOfFeeds = arrayOfStrings.map {
             $0.split(separator: ",")
         }
-        if arrayOfStrings.count > 0 && arrayOfFeeds[0].count == 5 {
+        if arrayOfStrings.count > 0 && arrayOfFeeds[0].count >= 4 {
             let arrayOfFeedObjects = arrayOfFeeds.map {
                 Feed(timestamp: self.dateFrom(string: String($0[1])) ?? Date(),
                      qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!,
