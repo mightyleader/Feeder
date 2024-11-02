@@ -189,6 +189,7 @@ extension ContentView { //DATA MANAGEMENT
             }
         } catch {
             print("Error exporting: \(error)")
+            showExportError.toggle()
         }
         return nil
     }
@@ -227,9 +228,11 @@ extension ContentView { //DATA MANAGEMENT
 
     private func importFeeds(from url: URL) {
         guard let data = try? Data(contentsOf: url) else {
+            self.showImportError.toggle()
             return
         }
         guard let stringOfFeeds = String(data: data, encoding: .utf8) else {
+            self.showImportError.toggle()
             return
         }
         let stringOfStringsOfFeeds = String(stringOfFeeds)
@@ -240,7 +243,7 @@ extension ContentView { //DATA MANAGEMENT
         if arrayOfStrings.count > 0 && arrayOfFeeds[0].count >= 4 {
             let arrayOfFeedObjects = arrayOfFeeds.map {
                 Feed(timestamp: self.dateFrom(string: String($0[1])) ?? Date(),
-                     qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!,
+                     qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!, //Need some nil-testing here
                      source: self.sourceFrom(rawValue: String($0[4])))
             }
             for feed in arrayOfFeedObjects {
