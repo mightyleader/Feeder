@@ -17,6 +17,11 @@ struct NotesSheetView: View {
     var body: some View {
         VStack {
             HStack {
+                Button {
+                    self.initialNote()
+                } label: {
+                    Label("", systemImage: "plus")
+                }
                 Spacer()
                 Button {
                     self.dismiss()
@@ -35,10 +40,19 @@ struct NotesSheetView: View {
             
             //INPUT
             VStack {
-                TextField("", text: .constant(""))
+                TextField("Title", text: .constant("Type something here..."))
                     
             }
         }
+    }
+}
+
+extension NotesSheetView {
+    private func initialNote() {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        let note = Note(title: dateFormatter.string(from: Date.now), body: "Test Note. Who doesn't love a test note.")
+        self.modelContext.insert(note)
     }
 }
 
