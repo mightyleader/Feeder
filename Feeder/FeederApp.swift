@@ -11,14 +11,15 @@ import SwiftData
 @main
 struct FeederApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([Feed.self])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
+        let feedSchema = Schema([Feed.self])
+        let noteSchema = Schema([Note.self])
+        let feedModelConfiguration = ModelConfiguration("default", schema: feedSchema, isStoredInMemoryOnly: false)
+        let noteModelConfiguration = ModelConfiguration("NoteConfiguration", schema: noteSchema, isStoredInMemoryOnly: false, groupContainer: .none, cloudKitDatabase: .none)
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(for: Feed.self, Note.self, configurations: feedModelConfiguration, noteModelConfiguration)
         } catch {
             //TODO: add some error correction
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Could not create ModelContainer: \n\(error)")
         }
     }()
 
