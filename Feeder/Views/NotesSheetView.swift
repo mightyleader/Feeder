@@ -15,35 +15,49 @@ struct NotesSheetView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack {
-            HStack {
-                Button {
-                    self.initialNote()
-                } label: {
-                    Label("", systemImage: "plus")
-                }
-                Spacer()
-                Button {
-                    self.dismiss()
-                } label: {
-                    Label("", systemImage: "xmark")
-                }
-            }
-            .padding()
-            
-            //LIST
-            List {
-                ForEach(notes) { note in
-                    Text(note.title)
-                }
-            }
-            
-            //INPUT
+        NavigationSplitView {
             VStack {
-                TextField("Title", text: .constant("Type something here..."))
+                HStack {
+                    Button {
+                        self.initialNote()
+                    } label: {
+                        Label("", systemImage: "plus")
+                    }
+                    Spacer()
+                    Button {
+                        self.dismiss()
+                    } label: {
+                        Label("", systemImage: "xmark")
+                    }
+                }
+                .padding()
+                
+                //LIST
+                List {
+                    ForEach(notes) { note in
+                        NavigationLink {
+                            
+                        } label: {
+                            Text(note.title)
+                        }
+                    }
+                    NavigationLink {
+                        
+                    } label: {
+                        Text("Add a Note...")
+                    }
+                }
+                
+                //INPUT
+                VStack {
+                    TextField("Title", text: .constant("Type something here..."))
                     
-            }
+                }
+            }.padding()
+        } detail: {
+            
         }
+        
     }
 }
 
