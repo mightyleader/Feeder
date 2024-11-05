@@ -37,10 +37,17 @@ struct AddNoteView: View {
             .tint(.green)
             Spacer()
         }
+        .alert(isPresented: $contentErrorFound) {
+            Alert(title: Text("Error"), message: Text("Please enter a title and note body."))
+        }
     }
     
     
     private func addNote() {
+        if title.isEmpty {
+            self.contentErrorFound = true
+            return
+        }
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
         let note = Note(title: self.title, body: self.notebody)
