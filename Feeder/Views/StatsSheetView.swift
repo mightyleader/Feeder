@@ -31,6 +31,10 @@ struct StatsSheetView: View {
     @Environment(\.dismiss) var dismiss
     @State private var shouldShowAverage: Bool = true
     
+    //Rendering and sharing
+    @State private var renderedImage = Image(systemName: "photo")
+    @Environment(\.displayScale) var displayScale
+    
     var limitingDate: Date
     var avg_feed: Double {
         if !feeds.isEmpty {
@@ -51,10 +55,7 @@ struct StatsSheetView: View {
     var body: some View {
         VStack {
             HStack {
-//                Button {
-//                } label: {
-//                    Label("Share", systemImage: "square.and.arrow.up")
-//                }
+                ShareLink("Share", item: renderedImage, preview: SharePreview(Text("Shared image"), image: renderedImage))
                 Spacer()
                 Button {
                     self.dismiss()
@@ -141,11 +142,27 @@ struct StatsSheetView: View {
                 }
             }
         }
+        .onAppear() {
+            render()
+        }
         .padding()
     }
 }
 
 extension StatsSheetView {
+    
+    @MainActor private func render() {
+        let shareView = StatsShareView(sourceStats: self.splitBySource(feeds: self.feeds), feeds: self.feeds)
+        let renderer = ImageRenderer(content: shareView.body)
+        
+        // make sure and use the correct display scale for this device
+        renderer.scale = displayScale
+        
+        if let uiImage = renderer.uiImage {
+            renderedImage = Image(uiImage: uiImage)
+        }
+    }
+    
     private func splitBySource(feeds: [Feed]) -> [SourceStat] {
         
         let breastFeeds = feeds.filter { $0.source == .breast }
