@@ -104,13 +104,13 @@ struct ContentView: View {
                             }
                         }
                         
-                        ToolbarItem(placement: .secondaryAction) {
-                            Button {
-                                self.deleteAllItems()
-                            } label: {
-                                Label("Delete All Data", systemImage: "trash")
-                            }
-                        }
+//                        ToolbarItem(placement: .secondaryAction) {
+//                            Button {
+//                                self.deleteAllItems()
+//                            } label: {
+//                                Label("Delete All Data", systemImage: "trash")
+//                            }
+//                        }
                         
                         ToolbarItem(placement: .secondaryAction) {
                             Button {

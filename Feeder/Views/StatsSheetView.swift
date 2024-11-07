@@ -55,7 +55,7 @@ struct StatsSheetView: View {
     var body: some View {
         VStack {
             HStack {
-                ShareLink("Share", item: renderedImage, preview: SharePreview(Text("Shared image"), image: renderedImage))
+//                ShareLink("Share", item: renderedImage, preview: SharePreview(Text("Shared image"), image: renderedImage))
                 Spacer()
                 Button {
                     self.dismiss()
@@ -143,7 +143,7 @@ struct StatsSheetView: View {
             }
         }
         .onAppear() {
-            render()
+//            render()
         }
         .padding()
     }
@@ -152,8 +152,7 @@ struct StatsSheetView: View {
 extension StatsSheetView {
     
     @MainActor private func render() {
-        let shareView = StatsShareView(sourceStats: self.splitBySource(feeds: self.feeds), feeds: self.feeds)
-        let renderer = ImageRenderer(content: shareView.body)
+        let renderer = ImageRenderer(content: self.body)
         
         // make sure and use the correct display scale for this device
         renderer.scale = displayScale
