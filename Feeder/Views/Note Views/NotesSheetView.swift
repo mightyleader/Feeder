@@ -40,19 +40,22 @@ struct NotesSheetView: View {
                     .tint(.green)
                 }
                 
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button {
-                        self.dismiss()
-                    } label: {
-                        Label("Close", systemImage: "xmark")
-                    }
-                    .tint(.green)
-                }
+//                ToolbarItem(placement: .navigationBarLeading) {
+//                    Button {
+//                        self.dismiss()
+//                    } label: {
+//                        Label("Close", systemImage: "xmark")
+//                    }
+//                    .tint(.green)
+//                }
             }
             .sheet(isPresented: $showAddNote) {
                 AddNoteView()
                     .presentationDetents([.large])
             }
+#if os(iOS)
+            .navigationBarTitleDisplayMode(.large)
+#endif
             .navigationTitle("Notes")
             .navigationBarTitleDisplayMode(.inline)
         } detail: {
