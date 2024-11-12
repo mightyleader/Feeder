@@ -8,11 +8,22 @@
 import SwiftUI
 
 struct WeightLabel: View {
+    var weight: Double
+    
+    init(weight: Double) {
+        self.weight = weight
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Text(" \(String(self.weight))g ")
+            .background(.orange)
+            .foregroundStyle(.white)
+            .cornerRadius(5.0)
+            .font(.callout)
+            .fontWeight(.heavy)
     }
 }
 
 #Preview {
-    WeightLabel()
+                WeightLabel(weight: 3400.00)
 }
