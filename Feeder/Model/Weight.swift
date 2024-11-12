@@ -17,11 +17,20 @@ enum WeightType: String, Codable, CaseIterable {
 final class Weight: Identifiable {
     var id = UUID()
     var weight: Double
-    var date: Date
+    var date: Date = Date()
     var type: WeightType = WeightType.weight
     
-    init(weight: Double, date: Date) {
+    init(weight: Double,
+         type: WeightType) {
         self.weight = weight
+        self.type = type
+    }
+    
+    init(weight: Double,
+         type: WeightType,
+         date: Date) {
+        self.weight = weight
+        self.type = type
         self.date = date
     }
 }
