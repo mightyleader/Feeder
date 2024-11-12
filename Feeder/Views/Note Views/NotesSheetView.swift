@@ -57,7 +57,7 @@ struct NotesSheetView: View {
             .navigationBarTitleDisplayMode(.large)
 #endif
             .navigationTitle("Notes")
-            .navigationBarTitleDisplayMode(.inline)
+//            .navigationBarTitleDisplayMode(.inline)
         } detail: {
             //TODO: Detail view for the larger devices.
         }

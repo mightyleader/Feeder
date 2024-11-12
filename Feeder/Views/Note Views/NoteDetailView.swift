@@ -35,7 +35,7 @@ struct NoteDetailView: View {
             EditNoteView(note: self.note)
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .automatic) {
                 Button {
                     self.showEditSheet.toggle()
                 } label: {

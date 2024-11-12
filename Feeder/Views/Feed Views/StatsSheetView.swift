@@ -156,10 +156,11 @@ extension StatsSheetView {
         
         // make sure and use the correct display scale for this device
         renderer.scale = displayScale
-        
+#if os(iOS)
         if let uiImage = renderer.uiImage {
             renderedImage = Image(uiImage: uiImage)
         }
+#endif
     }
     
     private func splitBySource(feeds: [Feed]) -> [SourceStat] {

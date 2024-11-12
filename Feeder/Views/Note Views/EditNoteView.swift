@@ -23,11 +23,15 @@ struct EditNoteView: View {
             TextField("", text: $note.title)
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+#if os(iOS)
                 .autocapitalization(.none)
+#endif
                 .cornerRadius(10.0)
             TextEditor(text: $note.body)
                 .textEditorStyle(.automatic)
+#if os(iOS)
                 .autocapitalization(.none)
+#endif
                 .backgroundStyle(.gray)
                 .cornerRadius(10.0)
                 .padding()

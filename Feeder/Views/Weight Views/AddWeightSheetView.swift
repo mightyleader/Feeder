@@ -39,7 +39,9 @@ struct AddWeightSheetView: View {
             HStack {
                 Spacer()
                 TextField("Weight", text: $weight)
+                #if os(iOS)
                     .keyboardType(.numberPad)
+                #endif
                     .frame(maxWidth: .infinity, alignment: .trailing)
                     .font(.title)
                     .fontWeight(.heavy)

@@ -47,8 +47,7 @@ struct FeedNavView: View {
                             }
                             .tint(.green)
                         }
-                        
-                        ToolbarItem(placement: .navigationBarLeading) {
+                        ToolbarItem(placement: .automatic) {
                             Button {
                                 showTodayOnly.toggle()
                             } label: {

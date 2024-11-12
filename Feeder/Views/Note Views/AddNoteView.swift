@@ -19,11 +19,16 @@ struct AddNoteView: View {
             TextField("Add title", text: $title)
                 .padding()
                 .textFieldStyle(RoundedBorderTextFieldStyle())
+#if os(iOS)
                 .autocapitalization(.none)
+#endif
                 .cornerRadius(10.0)
             TextEditor(text: $notebody)
                 .textEditorStyle(.automatic)
+#if os(iOS)
+
                 .autocapitalization(.none)
+#endif
                 .backgroundStyle(.gray)
                 .cornerRadius(10.0)
                 .padding()
