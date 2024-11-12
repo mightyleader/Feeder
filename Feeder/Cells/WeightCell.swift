@@ -8,11 +8,24 @@
 import SwiftUI
 
 struct WeightCell: View {
+    var weight: Weight
+    
+    init(weight: Weight) {
+        self.weight = weight
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Text("\(weight.date, format: Date.FormatStyle(date: .complete,  time: .standard))").foregroundStyle(.gray)
+            Spacer()
+            WeightLabel(weight: weight.weight)
+            weight.type == .birthWeight ? Image(systemName: "birthday.cake") : Image(systemName: "scalemass.fill")
+            
+        }
     }
 }
 
 #Preview {
-    WeightCell()
+    WeightCell(weight: .init(weight: 100,
+                             type: .birthWeight))
 }
