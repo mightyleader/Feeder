@@ -8,9 +8,10 @@
 import Foundation
 import SwiftData
 
-enum WeightType: String, Codable, CaseIterable {
-    case weight
-    case birthWeight
+enum WeightType: String, Codable, CaseIterable, Identifiable, Equatable{
+    case weight = "Standard Weighing"
+    case birthWeight = "Birth Weight"
+    var id: Self { self }
 }
 
 @Model
