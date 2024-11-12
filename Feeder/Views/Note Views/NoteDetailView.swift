@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NoteDetailView: View {
     var note: Note
+    @State var showEditSheet: Bool = false
+    
     var body: some View {
         VStack{
             Text(note.title)
@@ -29,6 +31,18 @@ struct NoteDetailView: View {
         }
         .frame(alignment: .leading)
         .padding()
+        .sheet(isPresented: $showEditSheet) {
+            EditNoteView(note: self.note)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                    self.showEditSheet.toggle()
+                } label: {
+                    Label("Edit Note", systemImage: "pencil")
+                }
+            }
+        }
         
     }
 }
