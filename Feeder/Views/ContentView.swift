@@ -21,7 +21,7 @@ struct ContentView: View {
                 }
                 .tag(1)
             
-            Text("Second View")
+            WeightNavView()
                 .tabItem {
                     Label("Weight", systemImage: "scalemass")
                 }
@@ -34,29 +34,6 @@ struct ContentView: View {
                 .tag(3)
         }
         .tint(.green)
-        
-//                        ToolbarItem(placement: .secondaryAction) {
-//                            Button {
-//                                self.deleteAllItems()
-//                            } label: {
-//                                Label("Delete All Data", systemImage: "trash")
-//                            }
-//                        }
-                        
-//                        ToolbarItem(placement: .secondaryAction) {
-//                            Button {
-//                                showNoteSheet = true
-//                            } label: {
-//                                Label("Notes",
-//                                      systemImage: "pencil.and.list.clipboard")
-//                            }
-//                        }
-
-//                    .sheet(isPresented: $showNoteSheet) {
-//                        NotesSheetView()
-//                            .presentationDetents([.large])
-//                    }
-   
     }
 }
 
