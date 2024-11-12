@@ -102,23 +102,6 @@ struct FeedNavView: View {
                                       systemImage: "wrench.adjustable")
                             }
                         }
-                        
-//                        ToolbarItem(placement: .secondaryAction) {
-//                            Button {
-//                                self.deleteAllItems()
-//                            } label: {
-//                                Label("Delete All Data", systemImage: "trash")
-//                            }
-//                        }
-                        
-//                        ToolbarItem(placement: .secondaryAction) {
-//                            Button {
-//                                showNoteSheet = true
-//                            } label: {
-//                                Label("Notes",
-//                                      systemImage: "pencil.and.list.clipboard")
-//                            }
-//                        }
 #endif
                     }
                     .sheet(isPresented: $showAddItemSheet) {
@@ -129,10 +112,6 @@ struct FeedNavView: View {
                         StatsSheetView(limitingDate: self.limitingDate)
                             .presentationDetents([.large])
                     })
-//                    .sheet(isPresented: $showNoteSheet) {
-//                        NotesSheetView()
-//                            .presentationDetents([.large])
-//                    }
                     .alert("Error importing data", isPresented: $showImportError) {
                         //config
                         // TODO: alert sheet
@@ -167,11 +146,6 @@ struct FeedNavView: View {
         .tint(.green)
     }
 }
-
-//#Preview {
-//    ContentView()
-//        .modelContainer(for: Feed.self, inMemory: true)
-//}
 
 extension FeedNavView { //DATA MANAGEMENT
     
