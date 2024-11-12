@@ -38,11 +38,6 @@ struct AddFeedSheetView: View {
             
             HStack {
                 Spacer()
-//                Picker("Feed", selection: $qty) {
-//                    ForEach(Quantities.allCases) { qty in
-//                        Text("\(qty.rawValue) ml")
-//                    }
-//                }
                 Picker("Feed", selection: $qty) {
                     ForEach(0..<2000) { qty in
                         Text("\(qty) ml")
