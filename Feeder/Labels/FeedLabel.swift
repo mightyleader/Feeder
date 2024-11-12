@@ -23,7 +23,7 @@ struct FeedLabel: View {
     }
     
     var body: some View {
-        Text(" \(String(self.qty)) ml ") //s.rawValue
+        Text(" \(String(self.qty)) ml ")
             .background(.blue)
             .foregroundStyle(.white)
             .cornerRadius(5.0)
