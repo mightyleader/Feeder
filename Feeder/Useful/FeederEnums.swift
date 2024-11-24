@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+public enum FeederDateFilter {
+    case today
+    case last7days
+    case last30days
+    case singleDate
+    case dateRange
+    case allTime
+}
