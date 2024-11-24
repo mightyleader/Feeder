@@ -14,19 +14,20 @@ struct FeedDatePickerView: View {
         VStack {
             HStack {
                 Button {
-                    self.dismiss()
+                    self.date = .now
                 } label: {
-                    Label("Cancel", image: "xmark")
+                    Label("Today", systemImage: "pin.circle.fill")
                 }
                 Spacer()
                 Button {
-                    self.date = .now
+                    self.dismiss()
                 } label: {
-                    Label("Today", image: "pin.circle.fill")
+                    Label("", systemImage: "xmark")
                 }
             }
-            .padding()
         }
+        .padding()
+        .tint(.green)
         DatePicker(
                 "Feed Date",
                 selection: $date,
