@@ -26,11 +26,11 @@ struct FeedNavView: View {
     private let today = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
     private let last7days = Calendar.autoupdatingCurrent.startOfDay(for:Date.now).advanced(by: 86400 * -7)
     private let last30days = Calendar.autoupdatingCurrent.startOfDay(for:Date.now).advanced(by: 86400 * -30)
-    private let allTime = Calendar.autoupdatingCurrent.startOfDay(for:Date.distantPast)
+    private let allTime = Calendar.autoupdatingCurrent.startOfDay(for:Date.now).advanced(by: 86400 * -356)
     
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
-    private var filterMode: FeederDateFilter = .today
+    @State var filterMode: FeederDateFilter = .today
     @State var limitingDate: Date = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
     @State var limitingDateRange: ClosedRange<Date> = Date.distantPast...Date.distantFuture
     //    {
@@ -46,6 +46,44 @@ struct FeedNavView: View {
                     .foregroundStyle(.green)
 #endif
                     .toolbar {
+                        ToolbarItem(placement: .automatic) {
+                            Menu {
+                                Button("Today",
+                                       action: {
+                                    self.limitingDate = self.today
+                                    self.filterMode = .today
+                                })
+                                Button("Last 7 days",
+                                       action: {
+                                    self.limitingDate = self.last7days
+                                    self.filterMode = .last7days
+                                })
+                                Button("Last 30 days",
+                                       action: {
+                                    self.limitingDate = self.last30days
+                                    self.filterMode = .last30days
+                                })
+                                Button("All feeds",
+                                       action: {
+                                    self.limitingDate = self.allTime
+                                    self.filterMode = .allTime
+                                })
+                                Button("Choose a date",
+                                       action: {
+                                    self.showDatePicker.toggle()
+                                    self.filterMode = .singleDate
+                                })
+                                Button("Choose date range",
+                                       action: {
+                                    self.showDatePicker.toggle()
+                                    self.filterMode = .dateRange
+                                })
+                            } label: {
+                                Label("Filter", systemImage: "calendar")
+                            }
+                            .tint(.green)
+                        }
+                        
                         ToolbarItem(placement: .primaryAction) {
                             Button {
                                 self.showAddItemSheet.toggle()
@@ -54,14 +92,6 @@ struct FeedNavView: View {
                             }
                             .tint(.green)
                         }
-                        
-                        //                        ToolbarItem(placement: .automatic) {
-                        //                            Button {
-                        //                                showTodayOnly.toggle()
-                        //                            } label: {
-                        //                                Text(showTodayOnly ? "Show All" : "Show Today")
-                        //                            }
-                        //                        }
                         
                         ToolbarItem(placement: .primaryAction) {
                             Button {
@@ -72,28 +102,6 @@ struct FeedNavView: View {
                             .tint(.green)
                         }
                         
-                        ToolbarItem(placement: .automatic) {
-                            Menu {
-                                Button("Today",
-                                       action: { self.limitingDate = self.today }
-                                )
-                                Button("Last 7 days",
-                                       action: { self.limitingDate = self.last7days }
-                                )
-                                Button("Last 30 days",
-                                       action: { self.limitingDate = self.last30days }
-                                )
-                                Button("All feeds",
-                                       action: { self.limitingDate = self.allTime }
-                                )
-                                Button("Choose a date",
-                                       action: { self.showDatePicker.toggle() }
-                                )
-                            } label: {
-                                Label("Filter", systemImage: "calendar")
-                            }
-                            .tint(.green)
-                        }
                         
                         ToolbarItem(placement: .secondaryAction) {
                             Button {
@@ -143,8 +151,8 @@ struct FeedNavView: View {
                             .presentationDetents([.large])
                     })
                     .sheet(isPresented: $showDatePicker) {
-                                                FeedDatePickerView(date: $limitingDate)
-                            .presentationDetents([.medium])
+                        FeedDatePickerView(date: $limitingDate)
+                            .presentationDetents([.fraction(0.65)])
                         }
                         .alert("Error importing data", isPresented: $showImportError) {
                             //config
