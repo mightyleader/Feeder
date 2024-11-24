@@ -16,7 +16,7 @@ struct HistoryFeedCell: View {
     
     var body: some View {
         VStack {
-            Text("\(feed.timestamp, format: Date.FormatStyle(date: .complete, time:.shortened))").foregroundStyle(.gray)
+            Text("\(feed.timestamp, format: Date.FormatStyle(date: .abbreviated, time:.shortened))").foregroundStyle(.gray)
             HStack {
                 SourceLabel(source: feed.source)
                 Spacer()
