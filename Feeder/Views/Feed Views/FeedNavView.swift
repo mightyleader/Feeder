@@ -5,6 +5,7 @@
 //  Created by Rob Stearn on 09/11/2024.
 //
 
+import Foundation
 import SwiftUI
 import SwiftData
 
@@ -16,24 +17,30 @@ struct FeedNavView: View {
     @State private var showStatSheet: Bool = false
     @State private var showImportError: Bool = false
     @State private var showExportError: Bool = false
+    @State private var showDatePicker: Bool = false
     
-    //File importing...
-    @State private var text = ""
-    @State private var error: Error?
+    //File importing/exporting...
     @State private var isImporting = false
     @State private var isExporting = false
     
+    private let today = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
+    private let last7days = Calendar.autoupdatingCurrent.startOfDay(for:Date.now).advanced(by: 86400 * -7)
+    private let last30days = Calendar.autoupdatingCurrent.startOfDay(for:Date.now).advanced(by: 86400 * -30)
+    private let allTime = Calendar.autoupdatingCurrent.startOfDay(for:Date.distantPast)
+    
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
-    var calendar: Calendar = .autoupdatingCurrent
-    var limitingDate: Date {
-        return self.showTodayOnly ? Calendar.autoupdatingCurrent.startOfDay(for:Date.now) : .distantPast
-    }
+    private var filterMode: FeederDateFilter = .today
+    @State var limitingDate: Date = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
+    @State var limitingDateRange: ClosedRange<Date> = Date.distantPast...Date.distantFuture
+    //    {
+    //        return self.showTodayOnly ? Calendar.autoupdatingCurrent.startOfDay(for:Date.now) : .distantPast
+    //    }
     
     var body: some View {
         NavigationSplitView {
             VStack {
-                FeedsView(limitingDate: self.limitingDate, showTodayOnly: self.showTodayOnly)
+                FeedsView(limitingDate: self.limitingDate, showTodayOnly: self.showTodayOnly, filterMode: self.filterMode)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
                     .foregroundStyle(.green)
@@ -47,19 +54,43 @@ struct FeedNavView: View {
                             }
                             .tint(.green)
                         }
-                        ToolbarItem(placement: .automatic) {
-                            Button {
-                                showTodayOnly.toggle()
-                            } label: {
-                                Text(showTodayOnly ? "Show All" : "Show Today")
-                            }
-                        }
+                        
+                        //                        ToolbarItem(placement: .automatic) {
+                        //                            Button {
+                        //                                showTodayOnly.toggle()
+                        //                            } label: {
+                        //                                Text(showTodayOnly ? "Show All" : "Show Today")
+                        //                            }
+                        //                        }
                         
                         ToolbarItem(placement: .primaryAction) {
                             Button {
                                 self.showStatSheet.toggle()
                             } label: {
                                 Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
+                        }
+                        
+                        ToolbarItem(placement: .automatic) {
+                            Menu {
+                                Button("Today",
+                                       action: { self.limitingDate = self.today }
+                                )
+                                Button("Last 7 days",
+                                       action: { self.limitingDate = self.last7days }
+                                )
+                                Button("Last 30 days",
+                                       action: { self.limitingDate = self.last30days }
+                                )
+                                Button("All feeds",
+                                       action: { self.limitingDate = self.allTime }
+                                )
+                                Button("Choose a date",
+                                       action: { self.showDatePicker.toggle() }
+                                )
+                            } label: {
+                                Label("Filter", systemImage: "calendar")
                             }
                             .tint(.green)
                         }
@@ -104,161 +135,161 @@ struct FeedNavView: View {
 #endif
                     }
                     .sheet(isPresented: $showAddItemSheet) {
-                        AddFeedSheetView()
+                        AddFeedSheetView(date: limitingDate)
                             .presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
                         StatsSheetView(limitingDate: self.limitingDate)
                             .presentationDetents([.large])
                     })
-                    .alert("Error importing data", isPresented: $showImportError) {
-                        //config
-                        // TODO: alert sheet
-                    }
-                    .alert("Error exporting data", isPresented: $showExportError, actions: {
-                        //config
-                        // TODO: alert sheet
-                    })
+                    .sheet(isPresented: $showDatePicker) {
+                                                FeedDatePickerView(date: $limitingDate)
+                            .presentationDetents([.medium])
+                        }
+                        .alert("Error importing data", isPresented: $showImportError) {
+                            //config
+                            // TODO: alert sheet
+                        }
+                        .alert("Error exporting data", isPresented: $showExportError, actions: {
+                            //config
+                            // TODO: alert sheet
+                        })
 #if os(iOS)
-                    .navigationBarTitleDisplayMode(.large)
+                        .navigationBarTitleDisplayMode(.large)
 #endif
-                    .navigationTitle("Feeds")
-                    .fileImporter(isPresented: $isImporting,
-                                  allowedContentTypes: [.commaSeparatedText]) { result in
-                        switch result {
+                        .navigationTitle("Feeds")
+                        .fileImporter(isPresented: $isImporting,
+                                      allowedContentTypes: [.commaSeparatedText]) { result in
+                            switch result {
                             case .success(let url):
                                 self.importFeeds(from: url)
                             case .failure(let error):
                                 print(error.localizedDescription)
                             }
+                        }
                     }
-            }
-        } detail: {
+            } detail: {
 #if os(macOS)
-            FeedDetailView()
+                FeedDetailView()
 #endif
-#if os(iOS)
-            
-#endif
+            }
+            .tint(.green)
         }
-        .foregroundStyle(.green)
-        .tint(.green)
     }
-}
 
-extension FeedNavView { //DATA MANAGEMENT
-    
-    private func deleteAllItems() {
-        withAnimation {
-            for index in self.feeds.indices {
-                modelContext.delete(feeds[index])
+    extension FeedNavView { //DATA MANAGEMENT
+        
+        private func deleteAllItems() {
+            withAnimation {
+                for index in self.feeds.indices {
+                    modelContext.delete(feeds[index])
+                }
             }
         }
-    }
-    
-    private func exportAllItems() -> URL? {
-        guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+        
+        private func exportAllItems() -> URL? {
+            guard let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
+                return nil
+            }
+            let fileURL = url.appendingPathComponent("Feeder Data-\(Date.now.description).csv")
+            do {
+                var stringOfFeeds: String = ""
+                for feed in feeds {
+                    stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.qty_ml.rawValue), \(feed.qty_as_int), \(feed.source.rawValue)\n")
+                }
+                if let dataOfFeeds = stringOfFeeds.data(using: .utf8) {
+                    if dataOfFeeds.count > 0
+                    /*&& !FileManager.default.fileExists(atPath: fileURL.path)*/ {
+                        try dataOfFeeds.write(to: fileURL)
+                        return fileURL
+                    }
+                }
+            } catch {
+                print("Error exporting: \(error)")
+                showExportError.toggle()
+            }
             return nil
         }
-        let fileURL = url.appendingPathComponent("Feeder Data-\(Date.now.description).csv")
-        do {
-            var stringOfFeeds: String = ""
-            for feed in feeds {
-                stringOfFeeds.append("\(feed.id), \(feed.timestamp), \(feed.qty_ml.rawValue), \(feed.qty_as_int), \(feed.source.rawValue)\n")
-            }
-            if let dataOfFeeds = stringOfFeeds.data(using: .utf8) {
-                if dataOfFeeds.count > 0
-                    /*&& !FileManager.default.fileExists(atPath: fileURL.path)*/ {
-                    try dataOfFeeds.write(to: fileURL)
-                    return fileURL
-                }
-            }
-        } catch {
-            print("Error exporting: \(error)")
-            showExportError.toggle()
-        }
-        return nil
-    }
-    
-    private func migrationRoutine() {
-        //Read from UserDefaults.
-        let defaults = UserDefaults.standard
-        let migrationComplete = defaults.bool(forKey: "migrationComplete")
-        print("Migration status: \(migrationComplete)")
         
-        if migrationComplete == false {
-            for feed in self.feeds {
-                //enum is non-zero and qty is 0 - Copy enum.rawvalue to qty
-                if feed.qty_ml != .zero && feed.qty_as_int == 0 {
-                    print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). MIGRATING")
-                    if let intFromString = Int(feed.qty_ml.rawValue) {
-                        feed.qty_as_int = intFromString
+        private func migrationRoutine() {
+            //Read from UserDefaults.
+            let defaults = UserDefaults.standard
+            let migrationComplete = defaults.bool(forKey: "migrationComplete")
+            print("Migration status: \(migrationComplete)")
+            
+            if migrationComplete == false {
+                for feed in self.feeds {
+                    //enum is non-zero and qty is 0 - Copy enum.rawvalue to qty
+                    if feed.qty_ml != .zero && feed.qty_as_int == 0 {
+                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). MIGRATING")
+                        if let intFromString = Int(feed.qty_ml.rawValue) {
+                            feed.qty_as_int = intFromString
+                        }
+                    } else {
+                        //enum is zero and qty is 0 - DO NOTHING
+                        //enum is zero and qty is > 0 - DO NOTHING
+                        //enum is non-zero and qty is > 0 - DO NOTHING
+                        print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). NOT MIGRATING")
                     }
-                } else {
-                    //enum is zero and qty is 0 - DO NOTHING
-                    //enum is zero and qty is > 0 - DO NOTHING
-                    //enum is non-zero and qty is > 0 - DO NOTHING
-                    print("Feed enum is \(feed.qty_ml), Feed Int is \(feed.qty_as_int). NOT MIGRATING")
+                }
+                do {
+                    try? self.modelContext.save()
+                    print("Migration saved to persistent store.")
+                    defaults.set(true, forKey: "migrationComplete")
+                    print ("Migration status saved to UserDefaults.")
+                }
+            } else {
+                return
+            }
+        }
+        
+        private func importFeeds(from url: URL) {
+            guard let data = try? Data(contentsOf: url) else {
+                self.showImportError.toggle()
+                return
+            }
+            guard let stringOfFeeds = String(data: data, encoding: .utf8) else {
+                self.showImportError.toggle()
+                return
+            }
+            let stringOfStringsOfFeeds = String(stringOfFeeds)
+            let arrayOfStrings = (stringOfStringsOfFeeds as String).split(separator: "\n")
+            let arrayOfFeeds = arrayOfStrings.map {
+                $0.split(separator: ",")
+            }
+            if arrayOfStrings.count > 0 && arrayOfFeeds[0].count >= 4 {
+                let arrayOfFeedObjects = arrayOfFeeds.map {
+                    Feed(timestamp: self.dateFrom(string: String($0[1])) ?? Date(),
+                         qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!, //Need some nil-testing here
+                         source: self.sourceFrom(rawValue: String($0[4])))
+                }
+                for feed in arrayOfFeedObjects {
+                    self.modelContext.insert(feed)
                 }
             }
-            do {
-                try? self.modelContext.save()
-                print("Migration saved to persistent store.")
-                defaults.set(true, forKey: "migrationComplete")
-                print ("Migration status saved to UserDefaults.")
+        }
+        
+        private func sourceFrom(rawValue: String) -> Source {
+            switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines) {
+            case "Breast Milk":
+                return .breast
+            case "Formula":
+                return .formula_standard
+            case "Formula Enriched":
+                return .formula_enriched
+            default:
+                return .formula_standard
             }
-        } else {
-            return
+        }
+        
+        private func dateFrom(string: String) -> Date? {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+            if let date = dateFormatter.date(from: string) {
+                return date
+            }
+            return nil
         }
     }
 
-    private func importFeeds(from url: URL) {
-        guard let data = try? Data(contentsOf: url) else {
-            self.showImportError.toggle()
-            return
-        }
-        guard let stringOfFeeds = String(data: data, encoding: .utf8) else {
-            self.showImportError.toggle()
-            return
-        }
-        let stringOfStringsOfFeeds = String(stringOfFeeds)
-        let arrayOfStrings = (stringOfStringsOfFeeds as String).split(separator: "\n")
-        let arrayOfFeeds = arrayOfStrings.map {
-            $0.split(separator: ",")
-        }
-        if arrayOfStrings.count > 0 && arrayOfFeeds[0].count >= 4 {
-            let arrayOfFeedObjects = arrayOfFeeds.map {
-                Feed(timestamp: self.dateFrom(string: String($0[1])) ?? Date(),
-                     qty_as_int: Int(String($0[3]).trimmingCharacters(in: .whitespacesAndNewlines))!, //Need some nil-testing here
-                     source: self.sourceFrom(rawValue: String($0[4])))
-            }
-            for feed in arrayOfFeedObjects {
-                self.modelContext.insert(feed)
-            }
-        }
-    }
-    
-    private func sourceFrom(rawValue: String) -> Source {
-        switch rawValue.trimmingCharacters(in: .whitespacesAndNewlines) {
-        case "Breast Milk":
-            return .breast
-        case "Formula":
-            return .formula_standard
-        case "Formula Enriched":
-            return .formula_enriched
-        default:
-            return .formula_standard
-        }
-    }
-    
-    private func dateFrom(string: String) -> Date? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
-        if let date = dateFormatter.date(from: string) {
-            return date
-        }
-        return nil
-    }
-    
-    
-}
+
