@@ -10,11 +10,15 @@ import SwiftData
 
 struct AddFeedSheetView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) var dismiss
     @State var qty: Int = 0
     @State var source: Source = .formula_standard
-    @State var date: Date = Date()
+    @State var date: Date
     
-    @Environment(\.dismiss) var dismiss
+    init(date: Date) {
+        self.date = date
+    }
+    
     
     var body: some View {
         VStack {
@@ -91,5 +95,5 @@ struct AddFeedSheetView: View {
 }
 
 #Preview {
-    AddFeedSheetView()
+    AddFeedSheetView(date: .now)
 }
