@@ -11,8 +11,8 @@ import SwiftData
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var feeds: [Feed]
-    @State private var selectedDate: Date
-    @State private var showDatePicker: Bool = false
+    //    @State private var selectedDate: Date
+    //    @State private var showDatePicker: Bool = false
     
     private var todayFormat: Date.FormatStyle = Date.FormatStyle(date: .none,
                                                                  time: .standard)
@@ -21,14 +21,14 @@ struct FeedsView: View {
     
     private var showTodayOnly: Bool
     private var filterMode: FeederDateFilter
-                            
+    
     init(limitingDate: Date, showTodayOnly: Bool, filterMode: FeederDateFilter) {
         self.filterMode = filterMode
         self.showTodayOnly = showTodayOnly
         _feeds = Query(filter: #Predicate<Feed> { feed in
             feed.timestamp >= limitingDate
         }, sort: \Feed.timestamp)
-        self.selectedDate = .now
+        //        self.selectedDate = .now
     }
     
     var body: some View {
@@ -50,10 +50,9 @@ struct FeedsView: View {
             }
             TotalView(qty_ml: total(items: self.feeds), highlightTarget: showTodayOnly, filterMode: self.filterMode)
         }
-        .sheet(isPresented: $showDatePicker) {
-            FeedDatePickerView(date: $selectedDate)
-                .presentationDetents([.medium])
-        }
+        //        .sheet(isPresented: $showDatePicker) {
+        //            FeedDatePickerView(date: $selectedDate)
+        //                .presentationDetents([.medium])
     }
     
     private func total(items: [Feed]) -> Int {
@@ -70,6 +69,7 @@ struct FeedsView: View {
         }
     }
 }
+
 
 extension FeedsView {
     
