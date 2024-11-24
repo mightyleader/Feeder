@@ -11,11 +11,17 @@ struct TotalView: View {
     @AppStorage("feedTarget") private var feedTarget: Double?
     var qty_ml: Int = 0
     var highlightTarget: Bool
-
+    private var filterMode: FeederDateFilter
+    
+    init(qty_ml: Int, highlightTarget: Bool, filterMode: FeederDateFilter) {
+        self.highlightTarget = highlightTarget
+        self.filterMode = filterMode
+        self.qty_ml = qty_ml
+    }
     
     var body: some View {
         VStack {
-            if highlightTarget == true {
+            if filterMode == .today || filterMode == .singleDate {
                 Text("Daily target is \(Int(feedTarget ?? 500)) ml")
                     .font(.footnote)
                     .tint(.gray)
@@ -41,5 +47,5 @@ struct TotalView: View {
 }
 
 #Preview {
-    TotalView(highlightTarget: true)
+    TotalView(qty_ml: 100, highlightTarget: true, filterMode: .allTime)
 }
