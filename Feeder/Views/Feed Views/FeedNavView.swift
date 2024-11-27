@@ -26,13 +26,14 @@ struct FeedNavView: View {
     
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
-    @State var filterMode: FeederDateFilter = .today
+    @State var filterMode: FeederDateFilter = .allTime
     @State var limitingDate: Date = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
     @State var limitingDateRange: ClosedRange<Date> = allTime...today
     
     var body: some View {
         NavigationSplitView {
             VStack {
+                FeedFilterModeView(filterMode: $filterMode)
                 FeedsView(dateQueryRange: self.limitingDateRange, filterMode: self.filterMode)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
@@ -139,16 +140,16 @@ struct FeedNavView: View {
                             .presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
-                        StatsSheetView(limitingDate: self.limitingDate)
+                        StatsSheetView(limitingDateRange: limitingDateRange)
                             .presentationDetents([.large])
                     })
                     .sheet(isPresented: $showDatePicker) {
                         FeedDatePickerView(dateRange: $limitingDateRange)
-                            .presentationDetents([.large])
+                            .presentationDetents([.fraction(0.65)])
                     }
                     .sheet(isPresented: $showDateRangePicker) {
                         FeedDateRangePickerView(dateQueryRange: $limitingDateRange)
-                            .presentationDetents([.medium])
+                            .presentationDetents([.fraction(0.25)])
                     }
                 
 //                    .alert("Error importing data", isPresented: $showImportError) {
