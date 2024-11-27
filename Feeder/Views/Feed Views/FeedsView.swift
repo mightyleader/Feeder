@@ -16,25 +16,9 @@ struct FeedsView: View {
                                                                  time: .standard)
     private var historyFormat: Date.FormatStyle = Date.FormatStyle(date: .abbreviated,
                                                                    time: .shortened)
-    
     private var showTodayOnly: Bool
     private var filterMode: FeederDateFilter
     
-    init(limitingDate: Date, showTodayOnly: Bool, filterMode: FeederDateFilter) {
-        self.filterMode = filterMode
-
-        self.showTodayOnly = showTodayOnly
-        _feeds = Query(filter: #Predicate<Feed> { feed in
-            feed.timestamp >= limitingDate //self.dateQueryRange.contains(feed.timestamp)
-        }, sort: \Feed.timestamp)
-        //        self.selectedDate = .now
-    }
-    
-    /*
-     a single date - all the feeds within that day
-     a range of dates - all the feeds within the supplied range.
-     basically these are the same thing!
-     */
     init(dateQueryRange: ClosedRange<Date>, filterMode: FeederDateFilter) {
         self.filterMode = filterMode
         self.showTodayOnly = false
@@ -85,18 +69,6 @@ struct FeedsView: View {
 
 extension FeedsView {
     
-    //Returns an array of Day structs, each Day has a Date and a list of feeds for that date.
-//    private func structuredData(fromFeeds feeds: [Feed]) -> [Day] {
-//        let dates = uniqueDates(fromFeeds: feeds)
-//        var returnStructuredData = Set<Day>()
-//        for date in dates {
-//            returnStructuredData.insert(Day(date: date,
-//                                            feeds: self.match(Date: date,toFeeds: feeds)))
-//            
-//        }
-//        return Array(returnStructuredData).sorted { $0.date > $1.date }
-//    }
-    
     //Return an array of unique days as Dates.
     private func uniqueDates(fromFeeds feeds: [Feed]) -> [Date] {
         let dates = feeds.map { feed in
@@ -119,5 +91,5 @@ extension FeedsView {
 }
 
 #Preview {
-    FeedsView(limitingDate: Date.distantPast, showTodayOnly: true, filterMode: .today)
+    FeedsView(dateQueryRange: Date.distantPast...Date.distantFuture, filterMode: .allTime)
 }
