@@ -33,7 +33,7 @@ struct FeedDateRangePickerView: View {
                        selection: $fromDate,
                        displayedComponents: [.date])
             .datePickerStyle(.automatic)
-            DatePicker("From",
+            DatePicker("To",
                        selection: $toDate,
                        displayedComponents: [.date])
             .datePickerStyle(.automatic)
