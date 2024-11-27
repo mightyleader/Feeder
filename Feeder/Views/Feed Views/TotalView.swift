@@ -22,7 +22,7 @@ struct TotalView: View {
     var body: some View {
         VStack {
             if filterMode == .today || filterMode == .singleDate {
-                Text("Daily target is \(Int(feedTarget ?? 500)) ml")
+                Text("Daily target is currently \(Int(feedTarget ?? 500)) ml")
                     .font(.footnote)
                     .tint(.gray)
                     .fontWeight(.semibold)
@@ -39,7 +39,7 @@ struct TotalView: View {
                 Text("\(qty_ml) ml")
                     .font(.title)
                     .fontWeight(.heavy)
-                    .foregroundColor(highlightTarget ? ( qty_ml >= /*self.dailyFeedTarget*/ Int(feedTarget ?? 500) ? .green : .red) : .primary)
+                    .foregroundColor(highlightTarget ? ( qty_ml >= Int(feedTarget ?? 500) ? .green : .red) : .primary)
                     .padding()
             }
         }
