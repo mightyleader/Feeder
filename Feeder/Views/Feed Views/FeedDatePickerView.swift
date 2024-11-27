@@ -9,7 +9,9 @@ import SwiftUI
 
 struct FeedDatePickerView: View {
     @Environment(\.dismiss) var dismiss
-    @Binding var date: Date
+    @Environment(\.calendar) var calendar
+    @State var date: Date = .now
+    @Binding var dateRange: ClosedRange<Date>
     var body: some View {
         VStack {
             HStack {
@@ -36,11 +38,8 @@ struct FeedDatePickerView: View {
         .datePickerStyle(.graphical)
         .tint(.green)
         .onChange(of: date, initial: false) { oldValue, newValue in
+            dateRange = calendar.startOfDay(for: newValue)...calendar.startOfDay(for: newValue).advanced(by: 86399)
             self.dismiss()
         }
     }
 }
-
-//#Preview {
-//    FeedDatePickerView()
-//}
