@@ -27,19 +27,21 @@ struct FeedDatePickerView: View {
                     Label("", systemImage: "xmark")
                 }
             }
-        }
-        .padding()
-        .tint(.green)
-        DatePicker(
+            .padding()
+            DatePicker(
                 "Feed Date",
                 selection: $date,
                 displayedComponents: [.date]
             )
-        .datePickerStyle(.graphical)
+            .datePickerStyle(.graphical)
+            .tint(.green)
+            .onChange(of: date, initial: false) { oldValue, newValue in
+                dateRange = calendar.startOfDay(for: newValue)...calendar.startOfDay(for: newValue).advanced(by: 86399)
+                self.dismiss()
+        }
+        .padding()
         .tint(.green)
-        .onChange(of: date, initial: false) { oldValue, newValue in
-            dateRange = calendar.startOfDay(for: newValue)...calendar.startOfDay(for: newValue).advanced(by: 86399)
-            self.dismiss()
+        Spacer()
         }
     }
 }
