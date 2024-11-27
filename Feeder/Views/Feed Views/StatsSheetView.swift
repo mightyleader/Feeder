@@ -34,8 +34,7 @@ struct StatsSheetView: View {
     //Rendering and sharing
     @State private var renderedImage = Image(systemName: "photo")
     @Environment(\.displayScale) var displayScale
-    
-    var limitingDate: Date
+
     var avg_feed: Double {
         if !feeds.isEmpty {
             return Double(feeds.reduce(0) {
@@ -45,10 +44,9 @@ struct StatsSheetView: View {
         return 0
     }
     
-    init(limitingDate: Date) {
-        self.limitingDate = limitingDate
+    init(limitingDateRange: ClosedRange<Date>) {
         _feeds = Query(filter: #Predicate<Feed> { feed in
-            feed.timestamp >= limitingDate
+            feed.timestamp >= limitingDateRange.lowerBound && feed.timestamp <= limitingDateRange.upperBound
         }, sort: \Feed.timestamp)
     }
     
@@ -153,8 +151,6 @@ extension StatsSheetView {
     
     @MainActor private func render() {
         let renderer = ImageRenderer(content: self.body)
-        
-        // make sure and use the correct display scale for this device
         renderer.scale = displayScale
 #if os(iOS)
         if let uiImage = renderer.uiImage {
@@ -182,8 +178,4 @@ extension StatsSheetView {
         
         return sources
     }
-}
-
-#Preview {
-    StatsSheetView(limitingDate: Date.distantPast)
 }
