@@ -11,8 +11,6 @@ import SwiftData
 struct FeedsView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var feeds: [Feed]
-    //    @State private var selectedDate: Date
-    //    @State private var showDatePicker: Bool = false
     
     private var todayFormat: Date.FormatStyle = Date.FormatStyle(date: .none,
                                                                  time: .standard)
@@ -24,11 +22,26 @@ struct FeedsView: View {
     
     init(limitingDate: Date, showTodayOnly: Bool, filterMode: FeederDateFilter) {
         self.filterMode = filterMode
+
         self.showTodayOnly = showTodayOnly
         _feeds = Query(filter: #Predicate<Feed> { feed in
-            feed.timestamp >= limitingDate
+            feed.timestamp >= limitingDate //self.dateQueryRange.contains(feed.timestamp)
         }, sort: \Feed.timestamp)
         //        self.selectedDate = .now
+    }
+    
+    /*
+     a single date - all the feeds within that day
+     a range of dates - all the feeds within the supplied range.
+     basically these are the same thing!
+     */
+    init(dateQueryRange: ClosedRange<Date>, filterMode: FeederDateFilter) {
+        self.filterMode = filterMode
+        self.showTodayOnly = false
+        _feeds = Query(filter: #Predicate<Feed> { feed in
+//            dateQueryRange.contains(feed.timestamp)
+            feed.timestamp >= dateQueryRange.lowerBound && feed.timestamp <= dateQueryRange.upperBound
+        }, sort: \Feed.timestamp)
     }
     
     var body: some View {
@@ -39,7 +52,9 @@ struct FeedsView: View {
                         EditFeedSheetView(feed: feed)
                     } label: {
                         HStack {
-                            Text("\(feed.timestamp, format: historyFormat)").foregroundStyle(.gray)
+                            Text("\(feed.timestamp, format: historyFormat)")
+                                .foregroundStyle(.gray)
+                                .font(.caption)
                             Spacer()
                             SourceLabel(source: feed.source)
                             FeedLabel(qty: feed.qty_as_int)
@@ -50,9 +65,6 @@ struct FeedsView: View {
             }
             TotalView(qty_ml: total(items: self.feeds), highlightTarget: showTodayOnly, filterMode: self.filterMode)
         }
-        //        .sheet(isPresented: $showDatePicker) {
-        //            FeedDatePickerView(date: $selectedDate)
-        //                .presentationDetents([.medium])
     }
     
     private func total(items: [Feed]) -> Int {
@@ -73,25 +85,28 @@ struct FeedsView: View {
 
 extension FeedsView {
     
-    private func setOfDays(fromFeeds feeds: [Feed]) -> [Date] {
+    //Returns an array of Day structs, each Day has a Date and a list of feeds for that date.
+//    private func structuredData(fromFeeds feeds: [Feed]) -> [Day] {
+//        let dates = uniqueDates(fromFeeds: feeds)
+//        var returnStructuredData = Set<Day>()
+//        for date in dates {
+//            returnStructuredData.insert(Day(date: date,
+//                                            feeds: self.match(Date: date,toFeeds: feeds)))
+//            
+//        }
+//        return Array(returnStructuredData).sorted { $0.date > $1.date }
+//    }
+    
+    //Return an array of unique days as Dates.
+    private func uniqueDates(fromFeeds feeds: [Feed]) -> [Date] {
         let dates = feeds.map { feed in
             Calendar.autoupdatingCurrent.startOfDay(for: feed.timestamp)
         }
         return Array(Set(dates))
     }
     
-    private func structuredData(fromFeeds feeds: [Feed]) -> [Day] {
-        let dates = setOfDays(fromFeeds: feeds)
-        var returnStructuredData = Set<Day>()
-        for date in dates {
-            returnStructuredData.insert(Day(date: date,
-                                            feeds: self.match(Date: date,
-                                                              toFeeds: feeds)))
-            
-        }
-        return Array(returnStructuredData).sorted { $0.date > $1.date }
-    }
     
+    //Finds which Feeds happened on a specific date.
     private func match(Date date: Date, toFeeds feeds: [Feed]) -> [Feed] {
         var matchingFeeds = [Feed]()
         for feed in feeds {
