@@ -8,7 +8,7 @@
 import SwiftUI
 import SwiftData
 
-struct NotesSheetView: View {
+struct NotesView: View {
     @Environment(\.modelContext) private var modelContext
     @Query private var notes: [Note]
     @State private var showAddNote: Bool = false
@@ -65,7 +65,7 @@ struct NotesSheetView: View {
     }
 }
 
-extension NotesSheetView {
+extension NotesView {
     private func deleteNotes(offsets: IndexSet) {
         withAnimation {
             for index in offsets {
@@ -76,5 +76,5 @@ extension NotesSheetView {
 }
 
 #Preview {
-    NotesSheetView()
+    NotesView()
 }

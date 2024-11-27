@@ -27,7 +27,7 @@ struct ContentView: View {
                 }
                 .tag(2)
             
-            NotesSheetView()
+            NotesView()
                 .tabItem {
                     Label("Notes", systemImage: "pencil.and.list.clipboard")
                 }
