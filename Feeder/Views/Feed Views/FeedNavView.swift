@@ -33,7 +33,7 @@ struct FeedNavView: View {
     var body: some View {
         NavigationSplitView {
             VStack {
-                FeedFilterModeView(filterMode: $filterMode)
+                FeedFilterModeView(filterMode: $filterMode, limitingDateRange: $limitingDateRange)
                 FeedsView(dateQueryRange: self.limitingDateRange, filterMode: self.filterMode)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
