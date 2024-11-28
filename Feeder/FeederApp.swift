@@ -28,7 +28,7 @@ struct FeederApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .foregroundStyle(.green)
+//                .foregroundStyle(.green)
         }
         .modelContainer(sharedModelContainer)
     }
