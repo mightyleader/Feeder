@@ -27,7 +27,6 @@ struct FeedNavView: View {
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     @State var filterMode: FeederDateFilter = .allTime
-    @State var limitingDate: Date = Calendar.autoupdatingCurrent.startOfDay(for:Date.now)
     @State var limitingDateRange: ClosedRange<Date> = allTime...today
     
     var body: some View {
@@ -136,7 +135,7 @@ struct FeedNavView: View {
 #endif
                     }
                     .sheet(isPresented: $showAddItemSheet) {
-                        AddFeedSheetView(date: limitingDate)
+                        AddFeedSheetView(date: Date.now)
                             .presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
