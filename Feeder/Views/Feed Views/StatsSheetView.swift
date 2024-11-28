@@ -27,8 +27,8 @@ struct SourceStat: Identifiable {
 
 struct StatsSheetView: View {
     @Environment(\.modelContext) private var modelContext
-    @Query private var feeds: [Feed]
     @Environment(\.dismiss) var dismiss
+    @Query private var feeds: [Feed]
     @State private var shouldShowAverage: Bool = true
     
     //Rendering and sharing
