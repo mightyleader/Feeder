@@ -9,9 +9,8 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
-
-//    @State private var showNoteSheet: Bool = false
-    
+    @Environment(\.modelContext) private var modelContext
+    @State private var presentFirstRun: Bool = !UserDefaults.standard.bool(forKey: "firstRunBirthWeightLogged")
     
     var body: some View {
         TabView {
@@ -34,6 +33,10 @@ struct ContentView: View {
                 .tag(3)
         }
         .tint(.green)
+        .sheet(isPresented: $presentFirstRun) {
+            FirstRunSheet()
+        }
+        .presentationDetents([.medium])
     }
 }
 
