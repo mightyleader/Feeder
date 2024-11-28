@@ -17,7 +17,7 @@ struct AddWeightSheetView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
-        VStack {
+        VStack (alignment: .center) {
             HStack {
                 Spacer()
                 Button {
@@ -46,6 +46,9 @@ struct AddWeightSheetView: View {
                     .font(.title)
                     .fontWeight(.heavy)
                     .tint(.green)
+                    .border(.secondary)
+                    .textFieldStyle(.roundedBorder)
+                    .frame(alignment: .center)
                 Text(" grams")
                     .font(.title)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -53,7 +56,6 @@ struct AddWeightSheetView: View {
             }
             
             HStack {
-                Spacer()
                 Picker("Type", selection: $type) {
                     ForEach(WeightType.allCases) { type in
                         Text(type.rawValue)
@@ -63,7 +65,6 @@ struct AddWeightSheetView: View {
                 .tint(.green)
                 .font(.headline)
                 .fontWeight(.heavy)
-                Spacer()
             }
             
             Button("Add Weight") {
