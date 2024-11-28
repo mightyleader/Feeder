@@ -55,17 +55,17 @@ struct AddWeightSheetView: View {
                 Spacer()
             }
             
-            HStack {
-                Picker("Type", selection: $type) {
-                    ForEach(WeightType.allCases) { type in
-                        Text(type.rawValue)
-                    }
-                }
-                .pickerStyle(InlinePickerStyle())
-                .tint(.green)
-                .font(.headline)
-                .fontWeight(.heavy)
-            }
+//            HStack {
+//                Picker("Type", selection: $type) {
+//                    ForEach(WeightType.allCases) { type in
+//                        Text(type.rawValue)
+//                    }
+//                }
+//                .pickerStyle(InlinePickerStyle())
+//                .tint(.green)
+//                .font(.headline)
+//                .fontWeight(.heavy)
+//            }
             
             Button("Add Weight") {
                 self.addItem()

@@ -16,7 +16,9 @@ struct WeightCell: View {
     
     var body: some View {
         HStack {
-            Text("\(weight.date, format: Date.FormatStyle(date: .complete,  time: .standard))").foregroundStyle(.gray)
+            Text("\(weight.date, format: Date.FormatStyle(date: .abbreviated,  time: .standard))")
+                .foregroundStyle(.gray)
+                .font(.caption)
             Spacer()
             WeightLabel(weight: weight.weight)
             weight.type == .birthWeight ? Image(systemName: "birthday.cake") : Image(systemName: "scalemass.fill")
