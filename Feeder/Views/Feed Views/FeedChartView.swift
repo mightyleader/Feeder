@@ -25,7 +25,7 @@ struct SourceStat: Identifiable {
     }
 }
 
-struct StatsSheetView: View {
+struct FeedChartView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
     @Query private var feeds: [Feed]
@@ -147,7 +147,7 @@ struct StatsSheetView: View {
     }
 }
 
-extension StatsSheetView {
+extension FeedChartView {
     
     @MainActor private func render() {
         let renderer = ImageRenderer(content: self.body)

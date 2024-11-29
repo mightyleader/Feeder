@@ -11,12 +11,22 @@ import Charts
 
 struct WeightChartView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.dismiss) var dismiss
     @Query private var weights: [Weight]
     
     var body: some View {
+        HStack {
+            Spacer()
+            Button {
+                self.dismiss()
+            } label: {
+                Label("", systemImage: "xmark")
+            }
+        }
+        .padding()
         Chart {
             ForEach(weights) { weight in
-                BarMark(x: .value("Date", weight.date),
+                LineMark(x: .value("Date", weight.date),
                         y: .value("Weight in grams", weight.weight))
                 .annotation(position: .top) {
                     Text("\(String(weight.weight))g")
@@ -40,6 +50,7 @@ struct WeightChartView: View {
         .chartXAxisLabel(alignment: .center) {
             Text("Weights from \(weights.first?.date.formatted(.dateTime) ?? "")-\(weights.last?.date.formatted(.dateTime) ?? "")")
         }
+        .padding()
         .chartXAxis {
             AxisMarks {
                 AxisValueLabel {}

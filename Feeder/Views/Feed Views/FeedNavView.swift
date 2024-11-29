@@ -90,7 +90,7 @@ struct FeedNavView: View {
                             Button {
                                 self.showStatSheet.toggle()
                             } label: {
-                                Label("Details", systemImage: "chart.pie.fill")
+                                Label("Charts", systemImage: "chart.pie.fill")
                             }
                             .tint(.green)
                         }
@@ -139,7 +139,7 @@ struct FeedNavView: View {
                             .presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
-                        StatsSheetView(limitingDateRange: limitingDateRange)
+                        FeedChartView(limitingDateRange: limitingDateRange)
                             .presentationDetents([.large])
                     })
                     .sheet(isPresented: $showDatePicker) {

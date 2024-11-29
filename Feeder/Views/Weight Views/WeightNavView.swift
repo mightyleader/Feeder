@@ -32,7 +32,7 @@ struct WeightNavView: View {
     var body: some View {
         NavigationSplitView {
             VStack {
-                FeedFilterModeView(filterMode: $filterMode, limitingDateRange: $limitingDateRange)
+                WeightFilterModeView(filterMode: $filterMode, limitingDateRange: $limitingDateRange)
                 WeightView(dateQueryRange: self.limitingDateRange, filterMode: self.filterMode)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
@@ -86,6 +86,15 @@ struct WeightNavView: View {
                             .tint(.green)
                         }
                         
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                self.showStatSheet.toggle()
+                            } label: {
+                                Label("Details", systemImage: "chart.pie.fill")
+                            }
+                            .tint(.green)
+                        }
+                        
                         ToolbarItem(placement: .secondaryAction) {
                             Button {
                                 isImporting = true
@@ -105,8 +114,8 @@ struct WeightNavView: View {
                         AddWeightSheetView().presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
-                        //StatsSheetView(limitingDateRange: limitingDateRange)
-                        //    .presentationDetents([.large])
+                        WeightChartView()
+                            .presentationDetents([.medium])
                     })
                     .sheet(isPresented: $showDatePicker) {
                         DatePickerView(dateRange: $limitingDateRange)
