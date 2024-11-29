@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FeedDatePickerView: View {
+struct DatePickerView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.calendar) var calendar
     @State var date: Date = .now
@@ -29,7 +29,7 @@ struct FeedDatePickerView: View {
             }
             .padding()
             DatePicker(
-                "Feed Date",
+                "Select a date",
                 selection: $date,
                 displayedComponents: [.date]
             )

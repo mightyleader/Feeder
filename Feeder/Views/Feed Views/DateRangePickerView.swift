@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct FeedDateRangePickerView: View {
+struct DateRangePickerView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.calendar) var calendar
     @State var fromDate: Date = Calendar.autoupdatingCurrent.startOfDay(for: .now).advanced(by: 86400 * -10)
