@@ -70,24 +70,24 @@ struct FeedsView: View {
 extension FeedsView {
     
     //Return an array of unique days as Dates.
-    private func uniqueDates(fromFeeds feeds: [Feed]) -> [Date] {
-        let dates = feeds.map { feed in
-            Calendar.autoupdatingCurrent.startOfDay(for: feed.timestamp)
-        }
-        return Array(Set(dates))
-    }
-    
-    
-    //Finds which Feeds happened on a specific date.
-    private func match(Date date: Date, toFeeds feeds: [Feed]) -> [Feed] {
-        var matchingFeeds = [Feed]()
-        for feed in feeds {
-            if Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: date) {
-                matchingFeeds.append(feed)
-            }
-        }
-        return matchingFeeds
-    }
+//    private func uniqueDates(fromFeeds feeds: [Feed]) -> [Date] {
+//        let dates = feeds.map { feed in
+//            Calendar.autoupdatingCurrent.startOfDay(for: feed.timestamp)
+//        }
+//        return Array(Set(dates))
+//    }
+//    
+//    
+//    //Finds which Feeds happened on a specific date.
+//    private func match(Date date: Date, toFeeds feeds: [Feed]) -> [Feed] {
+//        var matchingFeeds = [Feed]()
+//        for feed in feeds {
+//            if Calendar.autoupdatingCurrent.isDate(feed.timestamp, inSameDayAs: date) {
+//                matchingFeeds.append(feed)
+//            }
+//        }
+//        return matchingFeeds
+//    }
 }
 
 #Preview {

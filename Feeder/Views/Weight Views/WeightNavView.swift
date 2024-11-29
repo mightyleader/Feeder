@@ -15,6 +15,8 @@ struct WeightNavView: View {
     @State private var showStatSheet: Bool = false
     @State private var showImportError: Bool = false
     @State private var showExportError: Bool = false
+    @State private var showDatePicker: Bool = false
+    @State private var showDateRangePicker: Bool = false
     
     //File importing...
     @State private var text = ""
@@ -22,17 +24,59 @@ struct WeightNavView: View {
     @State private var isImporting = false
     @State private var isExporting = false
     
+    @State var filterMode: FeederDateFilter = .allTime
+    @State var limitingDateRange: ClosedRange<Date> = allTime...today
+    
     @Query private var weights: [Weight]
     
     var body: some View {
         NavigationSplitView {
             VStack {
-                WeightView()
+                FeedFilterModeView(filterMode: $filterMode, limitingDateRange: $limitingDateRange)
+                WeightView(dateQueryRange: self.limitingDateRange, filterMode: self.filterMode)
 #if os(macOS)
                     .navigationSplitViewColumnWidth(min: 250, ideal: 300)
                     .foregroundStyle(.green)
 #endif
                     .toolbar {
+                        ToolbarItem(placement: .automatic) {
+                            Menu {
+                                Button("Today",
+                                       action: {
+                                    self.limitingDateRange = today...today.advanced(by: 86399)
+                                    self.filterMode = .today
+                                })
+                                Button("Last 7 days",
+                                       action: {
+                                    self.limitingDateRange = last7days...Date.now
+                                    self.filterMode = .last7days
+                                })
+                                Button("Last 30 days",
+                                       action: {
+                                    self.limitingDateRange = last30days...Date.now
+                                    self.filterMode = .last30days
+                                })
+                                Button("All weights",
+                                       action: {
+                                    self.limitingDateRange = allTime...Date.now
+                                    self.filterMode = .allTime
+                                })
+                                Button("Choose a date",
+                                       action: {
+                                    self.showDatePicker.toggle()
+                                    self.filterMode = .singleDate
+                                })
+                                Button("Choose date range",
+                                       action: {
+                                    self.showDateRangePicker.toggle()
+                                    self.filterMode = .dateRange
+                                })
+                            } label: {
+                                Label("Filter", systemImage: "calendar")
+                            }
+                            .tint(.green)
+                        }
+                        
                         ToolbarItem(placement: .primaryAction) {
                             Button {
                                 self.showAddItemSheet.toggle()
@@ -60,14 +104,26 @@ struct WeightNavView: View {
                     .sheet(isPresented: $showAddItemSheet) {
                         AddWeightSheetView().presentationDetents([.large])
                     }
-                    .alert("Error importing data", isPresented: $showImportError) {
-                        //config
-                        // TODO: alert sheet
-                    }
-                    .alert("Error exporting data", isPresented: $showExportError, actions: {
-                        //config
-                        // TODO: alert sheet
+                    .sheet(isPresented: $showStatSheet, content: {
+                        //StatsSheetView(limitingDateRange: limitingDateRange)
+                        //    .presentationDetents([.large])
                     })
+                    .sheet(isPresented: $showDatePicker) {
+                        DatePickerView(dateRange: $limitingDateRange)
+                          .presentationDetents([.fraction(0.65)])
+                    }
+                    .sheet(isPresented: $showDateRangePicker) {
+                        DateRangePickerView(dateQueryRange: $limitingDateRange)
+                           .presentationDetents([.fraction(0.25)])
+                    }
+//                    .alert("Error importing data", isPresented: $showImportError) {
+//                        //config
+//                        // TODO: alert sheet
+//                    }
+//                    .alert("Error exporting data", isPresented: $showExportError, actions: {
+//                        //config
+//                        // TODO: alert sheet
+//                    })
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
 #endif
@@ -81,7 +137,6 @@ struct WeightNavView: View {
                             print(error.localizedDescription)
                         }
                     }
-//                WeightChartView()
                 }
         } detail: {
             

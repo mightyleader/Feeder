@@ -143,11 +143,11 @@ struct FeedNavView: View {
                             .presentationDetents([.large])
                     })
                     .sheet(isPresented: $showDatePicker) {
-                        FeedDatePickerView(dateRange: $limitingDateRange)
+                        DatePickerView(dateRange: $limitingDateRange)
                             .presentationDetents([.fraction(0.65)])
                     }
                     .sheet(isPresented: $showDateRangePicker) {
-                        FeedDateRangePickerView(dateQueryRange: $limitingDateRange)
+                        DateRangePickerView(dateQueryRange: $limitingDateRange)
                             .presentationDetents([.fraction(0.25)])
                     }
                 

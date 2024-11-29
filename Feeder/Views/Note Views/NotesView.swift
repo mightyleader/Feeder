@@ -13,6 +13,8 @@ struct NotesView: View {
     @Query private var notes: [Note]
     @State private var showAddNote: Bool = false
     
+    private var historyFormat: Date.FormatStyle = Date.FormatStyle(date: .abbreviated, time: .shortened)
+    
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
@@ -24,7 +26,14 @@ struct NotesView: View {
                         NavigationLink {
                             NoteDetailView(note: note)
                         } label: {
-                            Text(note.title)
+                            VStack {
+                                Text(note.title)
+                                    .multilineTextAlignment(.leading)
+                                Text("\(note.date, format: historyFormat)")
+                                    .foregroundStyle(.gray)
+                                    .font(.caption)
+                                    .multilineTextAlignment(.leading)
+                            }
                         }
                     }
                     .onDelete(perform: deleteNotes)

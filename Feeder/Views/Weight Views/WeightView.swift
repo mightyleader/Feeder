@@ -12,6 +12,17 @@ struct WeightView: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Weight.date, order: .forward) private var weights: [Weight]
     
+    private var showTodayOnly: Bool
+    private var filterMode: FeederDateFilter
+    
+    init(dateQueryRange: ClosedRange<Date>, filterMode: FeederDateFilter) {
+        self.filterMode = filterMode
+        self.showTodayOnly = false
+        _weights = Query(filter: #Predicate<Weight> { weight in
+            weight.date >= dateQueryRange.lowerBound && weight.date <= dateQueryRange.upperBound
+        }, sort: \Weight.date)
+    }
+    
     var body: some View {
         List {
             ForEach(self.weights) { weight in
@@ -41,5 +52,5 @@ struct WeightView: View {
 }
 
 #Preview {
-    WeightView()
+    WeightView(dateQueryRange: Date.distantPast...Date.distantFuture, filterMode: .allTime)
 }

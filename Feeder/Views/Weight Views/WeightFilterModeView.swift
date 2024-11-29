@@ -8,11 +8,34 @@
 import SwiftUI
 
 struct WeightFilterModeView: View {
+    @Binding var filterMode: FeederDateFilter
+    @Binding var limitingDateRange: ClosedRange<Date>
+    var dateFormat: Date.FormatStyle = Date.FormatStyle(date: .abbreviated)
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Text(self.textFrom(filterMode: self.filterMode,
+                               forDateRange: self.limitingDateRange))
+                .font(.caption2)
+                .fontWeight(.semibold)
+                .foregroundStyle(.gray)
+        }
     }
-}
-
-#Preview {
-    WeightFilterModeView()
+    
+    private func textFrom(filterMode: FeederDateFilter,
+                          forDateRange dateRange: ClosedRange<Date>) -> String {
+        switch filterMode {
+        case .today:
+            return "Showing weights for today"
+        case .allTime:
+            return "Showing all weights"
+        case .last7days:
+            return "Showing weights for the last 7 days"
+        case .last30days:
+            return "Showing weights for the last 30 days"
+        case .singleDate:
+            return "Showing weights for \(dateRange.lowerBound.formatted(dateFormat))"
+        case .dateRange:
+            return "Showing weights for dates between \(dateRange.lowerBound.formatted(dateFormat)) and \(dateRange.upperBound.formatted(dateFormat))"
+        }
+    }
 }
