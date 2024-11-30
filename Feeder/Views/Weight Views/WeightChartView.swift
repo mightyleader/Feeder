@@ -14,6 +14,12 @@ struct WeightChartView: View {
     @Environment(\.dismiss) var dismiss
     @Query private var weights: [Weight]
     
+    init(limitingDateRange: ClosedRange<Date>) {
+        _weights = Query(filter: #Predicate<Weight> { weight in
+            weight.date >= limitingDateRange.lowerBound && weight.date <= limitingDateRange.upperBound
+        }, sort: \Weight.date)
+    }
+    
     var body: some View {
         HStack {
             Spacer()
@@ -37,12 +43,11 @@ struct WeightChartView: View {
             }
         }
         .chartScrollableAxes(.horizontal)
-        .chartXVisibleDomain(length: 6)
-        .chartLegend(alignment: .top, spacing: 10){
-            Text("Weight history")
-                .font(.headline)
-                .foregroundStyle(.secondary)
-        }
+//        .chartLegend(alignment: .top, spacing: 10){
+//            Text("Weight history")
+//                .font(.headline)
+//                .foregroundStyle(.secondary)
+//        }
         .scaledToFit()
         .chartYAxisLabel {
             Text("Weight in grams")
@@ -59,6 +64,6 @@ struct WeightChartView: View {
     }
 }
 
-#Preview {
-    WeightChartView()
-}
+//#Preview {
+//    WeightChartView()
+//}

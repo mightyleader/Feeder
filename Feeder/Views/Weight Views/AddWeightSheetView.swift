@@ -80,9 +80,10 @@ struct AddWeightSheetView: View {
     }
     
     private func addItem() {
+        let newItem = Weight(weight: Double(weight) ?? 0.0, type: type, date: date)
+        modelContext.insert(newItem)
+        try? modelContext.save()
         withAnimation {
-            let newItem = Weight(weight: Double(weight) ?? 0.0, type: type, date: date)
-            modelContext.insert(newItem)
             self.dismiss()
         }
     }

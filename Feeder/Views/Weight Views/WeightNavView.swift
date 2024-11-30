@@ -25,7 +25,7 @@ struct WeightNavView: View {
     @State private var isExporting = false
     
     @State var filterMode: FeederDateFilter = .allTime
-    @State var limitingDateRange: ClosedRange<Date> = allTime...today
+    @State var limitingDateRange: ClosedRange<Date> = allTime...Calendar.autoupdatingCurrent.startOfDay(for: today).advanced(by: 86399)
     
     @Query private var weights: [Weight]
     
@@ -114,7 +114,7 @@ struct WeightNavView: View {
                         AddWeightSheetView().presentationDetents([.large])
                     }
                     .sheet(isPresented: $showStatSheet, content: {
-                        WeightChartView()
+                        WeightChartView(limitingDateRange: self.limitingDateRange)
                             .presentationDetents([.medium])
                     })
                     .sheet(isPresented: $showDatePicker) {
@@ -157,7 +157,6 @@ struct WeightNavView: View {
 
 extension WeightNavView {
     func deleteWeights(offsets: IndexSet) {
-//                modelContext.delete(offsets.map(\.self))
     }
     
     private func exportAllWeights() -> URL? {

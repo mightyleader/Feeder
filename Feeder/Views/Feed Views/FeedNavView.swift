@@ -27,7 +27,7 @@ struct FeedNavView: View {
     @Query(sort: \Feed.timestamp, order: .forward) private var feeds: [Feed]
     
     @State var filterMode: FeederDateFilter = .allTime
-    @State var limitingDateRange: ClosedRange<Date> = allTime...today
+    @State var limitingDateRange: ClosedRange<Date> = allTime...Calendar.autoupdatingCurrent.startOfDay(for: today).advanced(by: 86399)
     
     var body: some View {
         NavigationSplitView {
@@ -151,14 +151,14 @@ struct FeedNavView: View {
                             .presentationDetents([.fraction(0.25)])
                     }
                 
-//                    .alert("Error importing data", isPresented: $showImportError) {
-//                        //config
-//                        // TODO: alert sheet
-//                    }
-//                    .alert("Error exporting data", isPresented: $showExportError, actions: {
-//                        //config
-//                        // TODO: alert sheet
-//                    })
+                    .alert("Error importing data", isPresented: $showImportError) {
+                        //config
+                        // TODO: alert sheet
+                    }
+                    .alert("Error exporting data", isPresented: $showExportError, actions: {
+                        //config
+                        // TODO: alert sheet
+                    })
 #if os(iOS)
                     .navigationBarTitleDisplayMode(.large)
 #endif
