@@ -42,7 +42,7 @@ struct WeightChartView: View {
                 }
             }
         }
-        .chartScrollableAxes(.horizontal)
+//        .chartScrollableAxes(.horizontal)
 //        .chartLegend(alignment: .top, spacing: 10){
 //            Text("Weight history")
 //                .font(.headline)
