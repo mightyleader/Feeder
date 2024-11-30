@@ -141,6 +141,8 @@ struct WeightNavView: View {
                                   allowedContentTypes: [.commaSeparatedText]) { result in
                         switch result {
                         case .success(let url):
+                            let gotAccess = url.startAccessingSecurityScopedResource()
+                            if !gotAccess { return }
                             self.importWeights(from: url)
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -198,7 +200,7 @@ extension WeightNavView {
         }
         if arrayOfStrings.count > 0 && arrayOfWeights[0].count >= 4 {
             let arrayOfWeightObjects = arrayOfWeights.map {
-                Weight(weight: Double($0[2]) ?? 0.0,
+                Weight(weight: Double($0[2].trimmingCharacters(in: .whitespaces)) ?? 0.0,
                        type: self.typeFrom(String:String($0[3])) ?? .weight,
                        date: self.dateFrom(string:String($0[1])) ?? Date())
             }

@@ -167,6 +167,8 @@ struct FeedNavView: View {
                                   allowedContentTypes: [.commaSeparatedText]) { result in
                         switch result {
                         case .success(let url):
+                            let gotAccess = url.startAccessingSecurityScopedResource()
+                            if !gotAccess { return }
                             self.importFeeds(from: url)
                         case .failure(let error):
                             print(error.localizedDescription)
@@ -246,7 +248,8 @@ extension FeedNavView { //DATA MANAGEMENT
     }
     
     private func importFeeds(from url: URL) {
-        guard let data = try? Data(contentsOf: url) else {
+        let fileURL = url.standardizedFileURL
+        guard let data = try? Data(contentsOf: fileURL) else {
             self.showImportError.toggle()
             return
         }
