@@ -15,8 +15,8 @@ struct FeederApp: App {
         let noteSchema = Schema([Note.self])
         let weightSchema = Schema([Weight.self])
         let feedModelConfiguration = ModelConfiguration("default", schema: feedSchema, isStoredInMemoryOnly: false)
-        let noteModelConfiguration = ModelConfiguration("NoteConfiguration", schema: noteSchema, isStoredInMemoryOnly: false, groupContainer: .none, cloudKitDatabase: .none)
-        let weightModelConfiguraton = ModelConfiguration("WeightConfiguration", schema: weightSchema, isStoredInMemoryOnly: false, groupContainer: .none, cloudKitDatabase: .none)
+        let noteModelConfiguration = ModelConfiguration("NoteConfiguration", schema: noteSchema, isStoredInMemoryOnly: false /*groupContainer: .none, cloudKitDatabase: .none*/)
+        let weightModelConfiguraton = ModelConfiguration("WeightConfiguration", schema: weightSchema, isStoredInMemoryOnly: false /*groupContainer: .none, cloudKitDatabase: .none*/)
         do {
             return try ModelContainer(for: Feed.self, Note.self, Weight.self, configurations: feedModelConfiguration, noteModelConfiguration, weightModelConfiguraton)
         } catch {
