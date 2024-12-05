@@ -11,7 +11,7 @@ import SwiftData
 @Model
 final class Weight: Identifiable {
     var id = UUID()
-    var weight: Double
+    var weight: Double = 0.0
     var date: Date = Date()
     var type: WeightType = WeightType.weight
     

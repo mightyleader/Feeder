@@ -11,9 +11,9 @@ import SwiftData
 @Model
 final class Note: Identifiable {
     var id: UUID = UUID()
-    var title: String
+    var title: String = ""
     var date = Date()
-    var body: String
+    var body: String = ""
     
     init(title: String, body: String) {
         self.title = title
